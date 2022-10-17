@@ -1,5 +1,0 @@
-pymongo
-requests
-python-decouple
-dnspython
-pyjwt
