@@ -6,8 +6,10 @@
 /api/.env.local
 /.pnp
 .pnp.js
+/vscode
 
 # testing
+/test
 /coverage
 /test/__pycache__
 
