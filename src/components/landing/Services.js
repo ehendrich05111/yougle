@@ -126,7 +126,7 @@ export default function Services() {
         </TableBody>
       </Table>
       <div style={{ alignSelf: "center" }}>
-        <a href="https://slack.com/oauth/v2/authorize?client_id=4150752765812.4141695798086&scope=&user_scope=search:read">
+        <a href="https://slack.com/oauth/v2/authorize?client_id=4150752765812.4141695798086&scope=&user_scope=search:read&redirect_uri=https%3A%2F%2Fyougle.herokuapp.com%2Fslack_callback">
           <img
             alt="Add to Slack"
             height="40"
