@@ -1,81 +1,18 @@
-This app uses a create-react-app frontend and an Express backend, you might need to install one or both with npm install create-react-app or npm install Express
+# Yougle - frontend
+
+The modern era provides a variety of messaging services, and almost everyone uses more than one. You may use Slack for work, Discord for gaming, and basic text messages for communicating with your friends. With all these services, it is easy to forget when and with what app you sent a message, and while they all individually provide functionality to search for messages, no app exists that can search them all. 
+
+Yougle aims to solve this problem by conveniently searching for message content across all the messaging apps you use, so when you can’t find that important Slack message from your boss or that goofy text message from your friend, Yougle is the solution for you.
+
+## Prerequisites
 
 To enable the Slack OAuth integration, Yougle must be accessible via HTTPS on [yougle.local.gd](https://yougle.local.gd).
 
 To do this, install [mkcert](https://github.com/FiloSottile/mkcert), run `mkcert -install`, then run `mkcert yougle.local.gd` inside the Yougle folder.
-This should create `yougle.local.gd.pem` and `yougld.local.gd-key.pem`, which will be used when running the frontend.
+This should create `yougle.local.gd.pem` and `yougle.local.gd-key.pem`, which will be used when running the frontend.
 
-To run the app, open 2 terminals. In one terminal, navigate to the "api" folder and run npm start, in the other terminal, navigate to this folder (the top level folder) and run npm start
+## Running
 
-The app should appear and the text under the spinning React symbol should say "API is working properly"
+Before running the frontend, you must also run the [backend](https://github.com/ehendrich05111/yougle_api). Clone the repo, install packages using `npm i`, and run using `npm run dev`.
 
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Finally, you can run the frontend by first installing packages using `npm i` then running `npm run dev`. You should be redirected to [yougle.local.gd](https://yougle.local.gd).
