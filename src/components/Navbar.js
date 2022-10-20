@@ -24,6 +24,9 @@ export default function Navbar(props) {
         <Link to="/saved" className="Nav-link">
           Saved
         </Link>
+        <Link to="/profile" className="Nav-link">
+          Account
+        </Link>
       </div>
       <div id="account-buttons">
         <IconButton onClick={signOut} sx={{ m: 2 }}>

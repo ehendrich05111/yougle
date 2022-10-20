@@ -129,3 +129,29 @@
   position: absolute;
   right: 0;
 }
+
+/* Profile Page */
+
+.Acc-box {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.Info-box {
+  display: block;
+  text-align: left;
+  /* background-color: red; */
+}
+
+#Acc-pic {
+  font-size: 12vh;
+  color: green;
+  padding: 0.5em;
+}
+
+#Acc-pic::before {
+  content: url("https://cdn-icons-png.flaticon.com/512/8690/8690809.png");
+  font-weight: bold;
+  font-style: italic;
+}
