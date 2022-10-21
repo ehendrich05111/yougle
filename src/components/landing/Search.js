@@ -17,6 +17,7 @@ import { API_BASE, fetcher } from "../../api/api";
 import { useAuth } from "../../contexts/AuthContext";
 import useSWR from "swr";
 import slack_icon from "../../images/slack_icon.jpeg";
+import teams_icon from "../../images/teams_icon.png";
 import { InsertLink, Star } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 
@@ -28,6 +29,8 @@ function SearchResult({
   username,
   permalink,
   onSave,
+  icon,
+  service
 }) {
   const { enqueueSnackbar } = useSnackbar();
   const date = new Date(timestamp * 1000);
@@ -47,7 +50,7 @@ function SearchResult({
         <Tooltip title="Slack">
           <IconButton>
             <img
-              src={slack_icon}
+              src={icon}
               alt="Slack logo"
               style={{ objectFit: "contain" }}
             />
@@ -69,7 +72,7 @@ function SearchResult({
       </Box>
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <Link href={permalink} target="_blank" rel="noopener noreferrer">
-          View in Slack
+          View in {service}
         </Link>
         <IconButton
           variant="small"
@@ -189,13 +192,28 @@ export default function Search() {
                 </FormGroup>
               </Box>
             }
-            {messages.map((result) => (
-              <SearchResult
-                key={result.permalink}
-                {...result}
-                onSave={onSave}
-              />
-            ))}
+            {messages.map((result) => {
+
+              if(result.service === "Slack"){
+                return(
+                <SearchResult
+                  key={result.permalink}
+                  {...result}
+                  onSave={onSave}
+                  icon={slack_icon}
+                  service={result.service}
+                />)
+              } else {
+                return(
+                  <SearchResult
+                    key={result.permalink}
+                    {...result}
+                    onSave={onSave}
+                    icon={teams_icon}
+                    service={result.service}
+                  />)
+              }
+              })}
           </>
         ) : null}
       </Box>

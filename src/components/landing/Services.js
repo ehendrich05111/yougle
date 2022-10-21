@@ -135,6 +135,9 @@ export default function Services() {
             srcSet="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"
           />
         </a>
+        <a href="https://login.microsoftonline.com/4130bd39-7c53-419c-b1e5-8758d6d63f21/oauth2/v2.0/authorize?client_id=12718039-8a0c-40d3-bdb4-00fef0b4a2ca&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A9000%2FconnectService%2fteamsRedirect&response_mode=form_post&scope=User.Read%20openid%20profile%20offline_access%20Mail.Read%20Chat.ReadWrite&state=12345">
+          Add to Teams
+        </a>
       </div>
     </FullPageCard>
   );
