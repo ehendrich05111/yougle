@@ -1,45 +1,43 @@
-import Shepherd from 'shepherd.js';
-
-
-const Tour = new Shepherd.Tour({
-  useModalOverlay: true,
+export const tourOptions = {
   defaultStepOptions: {
-    scrollTo: true
-  }
-});
-
-Tour.addStep({
-  id: 'first-step',
-  title: 'First Step',
-  text: 'This is the navigation bar.',
-  attachTo: {
-    element: '.Search-bar',
-    on: 'bottom',
+    cancelIcon: {
+      enabled: true,
+    },
   },
-  buttons: [
-    {
-      text: 'Next',
-      action: Tour.next
-    }
-  ]
-})
+  useModalOverlay: false,
+};
 
-Tour.addStep({
-  id: 'second-step',
-  title: 'Second Step',
-  text: 'This is the logo.',
-  attachTo: {
-    element: '.Yougle-logo',
-    on: 'bottom',
+export const steps = [
+  {
+    id: "first-step",
+    title: "First Step",
+    text: ["This is the navigation bar."],
+    attachTo: {
+      element: ".Search-bar",
+      on: "bottom",
+    },
+    buttons: [
+      {
+        classes: "shepherd-button-primary",
+        text: "Next",
+        type: "next",
+      },
+    ],
   },
-  buttons: [
-    {
-      text: 'Next',
-      action: Tour.next
-    }
-  ]
-})
-
-export default Tour;
-
-
+  {
+    id: "second-step",
+    title: "Second Step",
+    text: ["This is the Yougle logo."],
+    attachTo: {
+      element: ".Yougle-logo",
+      on: "bottom",
+    },
+    buttons: [
+      {
+        classes: "shepherd-button-primary",
+        text: "Next",
+        type: "next",
+      },
+    ],
+  },
+];

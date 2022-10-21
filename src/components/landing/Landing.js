@@ -1,9 +1,9 @@
 import React from "react";
+import { ShepherdTourContext } from "react-shepherd";
 import Search from "./Search";
 import Services from "./Services";
 import Navbar from "../Navbar";
 import SavedMessages from "./SavedMessages";
-import Tour from "./Tour";
 
 export const MainPages = {
   Search: "search",
@@ -12,15 +12,19 @@ export const MainPages = {
 };
 
 export default function Landing(props) {
+  const tour = React.useContext(ShepherdTourContext);
+
+  React.useEffect(() => {
+    //show tour first time visiting landing page
+    if (tour && !localStorage.getItem("shepherd-tour")) {
+      tour.start();
+      localStorage.setItem("shepherd-tour", "yes");
+    }
+  }, [tour]);
+
   var content = null;
   if (props.page === MainPages.Search) {
     content = <Search />;
-
-    //show tour first time visiting landing page
-    if (!localStorage.getItem('shepherd-tour')) {
-      Tour.start();
-      localStorage.setItem('shepherd-tour', 'yes');
-    }
   } else if (props.page === MainPages.Services) {
     content = <Services />;
   } else if (props.page === MainPages.Saved) {
@@ -28,7 +32,7 @@ export default function Landing(props) {
   } else {
     content = <p>Invalid page.</p>;
   }
-  
+
   return (
     <div>
       <Navbar />
