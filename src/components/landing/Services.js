@@ -19,8 +19,20 @@ import { Delete } from "@mui/icons-material";
 import { useAuth } from "../../contexts/AuthContext";
 import { useSnackbar } from "notistack";
 
+const teamsAuthorizeUrl =
+  "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?" +
+  "client_id=12718039-8a0c-40d3-bdb4-00fef0b4a2ca" +
+  "&response_type=code" +
+  "&redirect_uri=https%3A%2F%2Fyougle.local.gd%3A3000%2Fteams_callback" +
+  "&response_mode=query" +
+  // "&scope=User.Read%20Chat.Read%20Chat.ReadWrite%20ChannelMessage.Read.All%20offline_access" +
+  "&scope=User.Read%20Chat.Read%20Chat.ReadWrite%20offline_access" +
+  "&state=12345" +
+  "&prompt=consent";
+
 const serviceName = {
   slack: "Slack",
+  teams: "Teams",
 };
 
 export default function Services() {
@@ -135,9 +147,7 @@ export default function Services() {
             srcSet="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"
           />
         </a>
-        <a href="https://login.microsoftonline.com/4130bd39-7c53-419c-b1e5-8758d6d63f21/oauth2/v2.0/authorize?client_id=12718039-8a0c-40d3-bdb4-00fef0b4a2ca&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A9000%2FconnectService%2fteamsRedirect&response_mode=form_post&scope=User.Read%20openid%20profile%20offline_access%20Mail.Read%20Chat.ReadWrite&state=12345">
-          Add to Teams
-        </a>
+        <a href={teamsAuthorizeUrl}>Add to Teams</a>
       </div>
     </FullPageCard>
   );

@@ -8,13 +8,14 @@ import { SnackbarProvider } from "notistack";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <SnackbarProvider maxSnack={3} autoHideDuration={5000}>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </SnackbarProvider>
-  </React.StrictMode>
+  // disable strict mode to avoid adding two duplicate services when connecting
+  // <React.StrictMode>
+  <SnackbarProvider maxSnack={3} autoHideDuration={5000}>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  </SnackbarProvider>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
