@@ -1,3 +1,12 @@
+:root {
+  --yougle-green: rgb(52, 168, 83);
+  --yougle-blue: rgb(66, 133, 244);
+  --yougle-red: rgb(234, 67, 53);
+  --yougle-yellow: rgb(251, 188, 5);
+  --background-white: #efefef;
+  --foreground-white: #fdfdfd;
+}
+
 .App {
   text-align: center;
 }
@@ -134,8 +143,21 @@
 
 .Acc-box {
   display: flex;
-  flex-flow: row wrap;
   justify-content: center;
+  align-items: center;
+  height: calc(100vh - 4em);
+}
+
+.Acc-card {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  align-items: left;
+  min-width: 60%;
+  gap: 1.5em;
+  margin: 0 2% 0;
+  padding: 2% 2% 2%;
+  background: linear-gradient(var(--yougle-blue) 20%, var(--background-white) 0%);  
 }
 
 .Info-box {
@@ -146,12 +168,29 @@
 
 #Acc-pic {
   font-size: 12vh;
-  color: green;
-  padding: 0.5em;
+  color: var(--yougle-green);
+  background: var(--background-white);
+  border-radius: 50%;
+  margin-top: 10%;
 }
 
-#Acc-pic::before {
-  content: url("https://cdn-icons-png.flaticon.com/512/8690/8690809.png");
-  font-weight: bold;
-  font-style: italic;
+#Info-container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--foreground-white);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 2%;
+  padding: 3% 5% 4%;
+  row-gap: 1em;
+}
+
+#edit-button {
+  height: 5%;
+  background: var(--yougle-blue);
+}
+
+#unedit-button {
+  height: 5%;
+  background: var(--yougle-green);
 }
