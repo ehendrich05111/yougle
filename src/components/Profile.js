@@ -1,16 +1,52 @@
 import { AccountCircle, ModeEdit } from "@mui/icons-material";
 import { Box, Card, Button, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { API_BASE } from "../api/api";
+import { useAuth } from "../contexts/AuthContext";
 
-// TODO: Add account info fetching and add info change mechanism
+// TODO: Fix CSS
 export default function Profile() {
+  const { token } = useAuth();
+
   const [isEditing, setIsEditing] = useState(false);
   const [isEditName, setIsEditName] = useState(false);
   const [isEditMail, setIsEditMail] = useState(false);
   const [isEditPass, setIsEditPass] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [oldPass, setOldPass] = useState("");
+  const [newPass, setNewPass] = useState("");
+
+  useEffect(() => {
+    if (!(firstName && lastName && email) || isSubmitted) {
+      fetch(`${API_BASE}/profile`, {
+        method: "GET",
+        headers: { "Content-Type": "applications/json", Authorization: token },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.status !== "success") {
+            alert("User info fetch failed");
+          }
+
+          setFirstName(res.data.firstName);
+          setLastName(res.data.lastName);
+          setEmail(res.data.email);
+
+          setIsSubmitted(false);
+        });
+    }
+  }, [firstName, lastName, email]);
 
   const handleMainEdit = () => {
     if (isEditing) {
+      handleNameEdit();
+      handleMailEdit();
+      handlePassEdit();
+
       setIsEditName(false);
       setIsEditMail(false);
       setIsEditPass(false);
@@ -19,15 +55,71 @@ export default function Profile() {
   };
 
   const handleNameEdit = () => {
+    if (isEditName || isEditing) submitName();
     setIsEditName(!isEditName);
   };
 
   const handleMailEdit = () => {
+    if (isEditMail || isEditing) submitMail();
     setIsEditMail(!isEditMail);
   };
 
   const handlePassEdit = () => {
+    if (isEditPass || isEditing) submitPass();
     setIsEditPass(!isEditPass);
+  };
+
+  const submitName = () => {
+    fetch(`${API_BASE}/changeName`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: token },
+      body: JSON.stringify({
+        newFirstName: firstName,
+        newLastName: lastName,
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.status === "error") {
+          alert(res.message);
+        }
+      });
+    setIsSubmitted(true);
+  };
+
+  const submitMail = () => {
+    fetch(`${API_BASE}/changeEmail`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: token },
+      body: JSON.stringify({
+        newEmail: email,
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.status === "error") {
+          alert(res.message);
+        }
+      });
+    setIsSubmitted(true);
+  };
+
+  const submitPass = () => {
+    fetch(`${API_BASE}/changePassword`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: token },
+      body: JSON.stringify({
+        oldPassword: oldPass,
+        newPassword: newPass,
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.status === "error") {
+          alert(res.message);
+        }
+      });
+    setIsSubmitted(true);
   };
 
   return (
@@ -95,14 +187,30 @@ export default function Profile() {
               {isEditing || isEditName ? (
                 <div className="Row-box">
                   <div className="Info-box">
-                    <TextField variant="outlined" label="First" required />
+                    <TextField
+                      defaultValue={firstName}
+                      variant="outlined"
+                      onChange={(e) => {
+                        setLastName(e.target.value);
+                      }}
+                      label="First"
+                      required
+                    />
                   </div>
                   <div className="Info-box">
-                    <TextField variant="outlined" label="Last" required />
+                    <TextField
+                      defaultValue={lastName}
+                      variant="outlined"
+                      onChange={(e) => {
+                        setLastName(e.target.value);
+                      }}
+                      label="Last"
+                      required
+                    />
                   </div>
                 </div>
               ) : (
-                <div> SAMPLE TEXT </div>
+                <div> {firstName + " " + lastName} </div>
               )}
             </Box>
           </span>
@@ -143,12 +251,16 @@ export default function Profile() {
                 <div className="Info-box">
                   <TextField
                     variant="outlined"
+                    defaultValue={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                    }}
                     style={{ width: "100%" }}
                     required
                   />
                 </div>
               ) : (
-                <div> SAMPLE TEXT </div>
+                <div> {email} </div>
               )}
             </Box>
           </span>
@@ -190,12 +302,18 @@ export default function Profile() {
                   <TextField
                     variant="outlined"
                     type="password"
+                    onChange={(e) => {
+                      setOldPass(e.target.value);
+                    }}
                     label="Old"
                     required
                   />
                   <TextField
                     variant="outlined"
                     type="password"
+                    onChange={(e) => {
+                      setNewPass(e.target.value);
+                    }}
                     label="New"
                     required
                   />
