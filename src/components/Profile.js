@@ -25,7 +25,7 @@ export default function Profile() {
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    if (!(firstName && lastName && email) || isSubmitted) {
+    if (!(firstName && lastName && oldEmail) || isSubmitted) {
       fetchUserInfo();
       setIsSubmitted(false);
     }
@@ -59,7 +59,6 @@ export default function Profile() {
       setIsEditPass(false);
     }
     setIsEditing(!isEditing);
-    fetchUserInfo();
   };
 
   const handleNameEdit = () => {
@@ -67,7 +66,6 @@ export default function Profile() {
       if (isEditName || isEditing) submitName();
     }
     setIsEditName(!isEditName);
-    fetchUserInfo();
   };
 
   const handleMailEdit = () => {
@@ -75,7 +73,6 @@ export default function Profile() {
       if (isEditMail || isEditing) submitMail();
     }
     setIsEditMail(!isEditMail);
-    fetchUserInfo();
   };
 
   const handlePassEdit = () => {
@@ -83,7 +80,6 @@ export default function Profile() {
       if (isEditPass || isEditing) submitPass();
     }
     setIsEditPass(!isEditPass);
-    fetchUserInfo();
   };
 
   const submitName = () => {
@@ -221,7 +217,7 @@ export default function Profile() {
                           fetchUserInfo();
                           setIsEmpty(true);
                         } else {
-                          setLastName(e.target.value);
+                          setFirstName(e.target.value);
                           setIsEmpty(false);
                         }
                       }}
