@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { API_BASE } from "../api/api";
 import { useAuth } from "../contexts/AuthContext";
 
-// TODO: Fix CSS
+// TODO: Add toast messages
 export default function Profile() {
   const { token } = useAuth();
 
@@ -134,7 +134,7 @@ export default function Profile() {
             <Button
               variant="contained"
               id="unedit-button"
-              style={{ marginTop: "25%" }}
+              style={{ marginTop: "10%", transform: "translate(0, 200%)" }}
               onClick={handleMainEdit}
             >
               Done
@@ -143,7 +143,7 @@ export default function Profile() {
             <Button
               variant="contained"
               id="edit-button"
-              style={{ marginTop: "25%" }}
+              style={{ marginTop: "10%", transform: "translate(0, 200%)" }}
               onClick={handleMainEdit}
             >
               Edit Account Info
@@ -185,29 +185,30 @@ export default function Profile() {
                 </div>
               </span>
               {isEditing || isEditName ? (
-                <div className="Row-box">
-                  <div className="Info-box">
-                    <TextField
-                      defaultValue={firstName}
-                      variant="outlined"
-                      onChange={(e) => {
-                        setLastName(e.target.value);
-                      }}
-                      label="First"
-                      required
-                    />
-                  </div>
-                  <div className="Info-box">
-                    <TextField
-                      defaultValue={lastName}
-                      variant="outlined"
-                      onChange={(e) => {
-                        setLastName(e.target.value);
-                      }}
-                      label="Last"
-                      required
-                    />
-                  </div>
+                <div
+                  className="Row-box"
+                  style={{ justifyContent: "space-between" }}
+                >
+                  <TextField
+                    defaultValue={firstName}
+                    variant="outlined"
+                    onChange={(e) => {
+                      setLastName(e.target.value);
+                    }}
+                    sx={{ width: "45%" }}
+                    label="First"
+                    required
+                  />
+                  <TextField
+                    defaultValue={lastName}
+                    variant="outlined"
+                    onChange={(e) => {
+                      setLastName(e.target.value);
+                    }}
+                    sx={{ width: "45%" }}
+                    label="Last"
+                    required
+                  />
                 </div>
               ) : (
                 <div> {firstName + " " + lastName} </div>
@@ -298,13 +299,17 @@ export default function Profile() {
                 </div>
               </span>
               {isEditing || isEditPass ? (
-                <Box className="Row-box">
+                <div
+                  className="Row-box"
+                  style={{ justifyContent: "space-between" }}
+                >
                   <TextField
                     variant="outlined"
                     type="password"
                     onChange={(e) => {
                       setOldPass(e.target.value);
                     }}
+                    sx={{ width: "45%" }}
                     label="Old"
                     required
                   />
@@ -314,10 +319,11 @@ export default function Profile() {
                     onChange={(e) => {
                       setNewPass(e.target.value);
                     }}
+                    sx={{ width: "45%" }}
                     label="New"
                     required
                   />
-                </Box>
+                </div>
               ) : (
                 <div>
                   &#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;

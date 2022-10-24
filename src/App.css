@@ -142,10 +142,12 @@
 /* Profile Page */
 
 .Acc-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: calc(100vh - 4em);
+  position: absolute;
+  top: calc(50% + 2em);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  min-width: 550px;
 }
 
 .Acc-card {
@@ -153,21 +155,14 @@
   flex-flow: column wrap;
   justify-content: center;
   align-items: left;
-  min-width: 60%;
   gap: 1.5em;
   margin: 0 2% 0;
   padding: 2% 2% 2%;
   background: linear-gradient(var(--yougle-blue) 20%, var(--background-white) 0%);  
 }
 
-.Info-box {
-  display: block;
-  text-align: left;
-  /* background-color: red; */
-}
-
 #Acc-pic {
-  font-size: 12vh;
+  font-size: 8em;
   color: var(--yougle-green);
   background: var(--background-white);
   border-radius: 50%;
@@ -181,16 +176,21 @@
   border-radius: 10px;
   overflow: hidden;
   margin-top: 2%;
-  padding: 3% 5% 4%;
+  padding: 3% 6% 4%;
   row-gap: 1em;
 }
 
 #edit-button {
   height: 5%;
   background: var(--yougle-blue);
+  transform: translate(0, 50%)
 }
 
 #unedit-button {
   height: 5%;
   background: var(--yougle-green);
+}
+
+Row-Box > TextField {
+  width: 45%
 }
