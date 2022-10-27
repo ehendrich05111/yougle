@@ -1,10 +1,18 @@
 import { AccountCircle, ModeEdit } from "@mui/icons-material";
-import { Box, Card, Button, TextField, Alert } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { API_BASE } from "../api/api";
+import {
+  Box,
+  Card,
+  Button,
+  TextField,
+  Alert,
+  LinearProgress,
+} from "@mui/material";
+import { useSnackbar } from "notistack";
+import React, { useState } from "react";
+import useSWR from "swr";
+import { API_BASE, fetcher } from "../api/api";
 import { useAuth } from "../contexts/AuthContext";
 
-// TODO: Add toast error messages
 export default function Profile() {
   const { token } = useAuth();
 
@@ -16,34 +24,28 @@ export default function Profile() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [oldEmail, setOldEmail] = useState("");
   const [oldPass, setOldPass] = useState("");
   const [newPass, setNewPass] = useState("");
 
   const [isEmpty, setIsEmpty] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
+  const { enqueueSnackbar } = useSnackbar();
 
   // TODO: make this useSWR
-  const fetchUserInfo = React.useCallback(() => {
-    fetch(`${API_BASE}/profile`, {
-      method: "GET",
-      headers: { "Content-Type": "applications/json", Authorization: token },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.status !== "success") {
-          alert("User info fetch failed");
-        }
+  const { data, error, mutate } = useSWR(["/profile", token], fetcher);
 
-        setFirstName(res.data.firstName);
-        setLastName(res.data.lastName);
-        setOldEmail(res.data.email);
-      });
-  }, [token]);
+  React.useEffect(() => {
+    setFirstName(data?.data?.firstName || "");
+    setLastName(data?.data?.lastName || "");
+  }, [data]);
 
-  useEffect(() => {
-    fetchUserInfo();
-  }, []);
+  if (error) {
+    enqueueSnackbar(error.message, { variant: "error" });
+    return <></>;
+  }
+  if (!data) {
+    return <LinearProgress />;
+  }
+  const oldEmail = data.data.email;
 
   const handleMainEdit = () => {
     if (isEditing) {
@@ -91,9 +93,9 @@ export default function Profile() {
       .then((res) => res.json())
       .then((res) => {
         if (res.status === "error") {
-          if (!isEditing) setErrorMsg(res.message);
+          if (!isEditing) enqueueSnackbar(res.message, { variant: "error" });
         } else {
-          fetchUserInfo();
+          mutate();
         }
       });
   };
@@ -109,9 +111,9 @@ export default function Profile() {
       .then((res) => res.json())
       .then((res) => {
         if (res.status === "error") {
-          if (!isEditing) setErrorMsg(res.message);
+          if (!isEditing) enqueueSnackbar(res.message, { variant: "error" });
         } else {
-          setOldEmail(email);
+          mutate();
         }
       });
   };
@@ -128,7 +130,7 @@ export default function Profile() {
       .then((res) => res.json())
       .then((res) => {
         if (res.status === "error") {
-          if (!isEditing) setErrorMsg(res.message);
+          if (!isEditing) enqueueSnackbar(res.message, { variant: "error" });
         }
       });
   };
@@ -138,7 +140,6 @@ export default function Profile() {
       {isEmpty && (isEditing || isEditName || isEditMail || isEditPass) && (
         <Alert severity="warning">Please fill the required information</Alert>
       )}
-      {errorMsg && <Alert severity="warning">{errorMsg}</Alert>}
       <Box className="Acc-box">
         <Card
           className="Acc-card"
@@ -210,7 +211,6 @@ export default function Profile() {
                       variant="outlined"
                       onChange={(e) => {
                         if (!e.target.value) {
-                          // fetchUserInfo();
                           setIsEmpty(true);
                         } else {
                           setFirstName(e.target.value);
@@ -226,7 +226,6 @@ export default function Profile() {
                       variant="outlined"
                       onChange={(e) => {
                         if (!e.target.value) {
-                          // fetchUserInfo();
                           setIsEmpty(true);
                         } else {
                           setLastName(e.target.value);
@@ -283,7 +282,6 @@ export default function Profile() {
                       defaultValue={oldEmail}
                       onChange={(e) => {
                         if (!e.target.value) {
-                          // fetchUserInfo();
                           setIsEmpty(true);
                         } else {
                           setEmail(e.target.value);
