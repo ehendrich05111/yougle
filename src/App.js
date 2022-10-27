@@ -130,6 +130,14 @@ export default function App() {
             </AuthorizedRoute>
           }
         ></Route>
+        <Route
+          path="/profile"
+          element={
+            <AuthorizedRoute>
+              <Landing page={MainPages.Profile} />
+            </AuthorizedRoute>
+          }
+        ></Route>
       </Routes>
     </Router>
   );
