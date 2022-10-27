@@ -12,7 +12,6 @@ export default function Profile() {
   const [isEditName, setIsEditName] = useState(false);
   const [isEditMail, setIsEditMail] = useState(false);
   const [isEditPass, setIsEditPass] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -43,11 +42,8 @@ export default function Profile() {
   }, [token]);
 
   useEffect(() => {
-    if (!(firstName && lastName && oldEmail) || isSubmitted) {
-      fetchUserInfo();
-      setIsSubmitted(false);
-    }
-  }, [firstName, lastName, oldEmail, isSubmitted, fetchUserInfo]);
+    fetchUserInfo();
+  }, []);
 
   const handleMainEdit = () => {
     if (isEditing) {
@@ -95,10 +91,11 @@ export default function Profile() {
       .then((res) => res.json())
       .then((res) => {
         if (res.status === "error") {
-          setErrorMsg(res.message);
+          if (!isEditing) setErrorMsg(res.message);
+        } else {
+          fetchUserInfo();
         }
       });
-    setIsSubmitted(true);
   };
 
   const submitMail = () => {
@@ -112,12 +109,11 @@ export default function Profile() {
       .then((res) => res.json())
       .then((res) => {
         if (res.status === "error") {
-          setErrorMsg(res.message);
+          if (!isEditing) setErrorMsg(res.message);
         } else {
           setOldEmail(email);
         }
       });
-    setIsSubmitted(true);
   };
 
   const submitPass = () => {
@@ -132,10 +128,9 @@ export default function Profile() {
       .then((res) => res.json())
       .then((res) => {
         if (res.status === "error") {
-          setErrorMsg(res.message);
+          if (!isEditing) setErrorMsg(res.message);
         }
       });
-    setIsSubmitted(true);
   };
 
   return (
@@ -158,7 +153,7 @@ export default function Profile() {
                 style={{ marginTop: "10%", transform: "translate(0, 200%)" }}
                 onClick={handleMainEdit}
               >
-                {isEmpty ? "Done" : "Back"}
+                Done
               </Button>
             ) : (
               <Button
@@ -215,7 +210,7 @@ export default function Profile() {
                       variant="outlined"
                       onChange={(e) => {
                         if (!e.target.value) {
-                          fetchUserInfo();
+                          // fetchUserInfo();
                           setIsEmpty(true);
                         } else {
                           setFirstName(e.target.value);
@@ -231,7 +226,7 @@ export default function Profile() {
                       variant="outlined"
                       onChange={(e) => {
                         if (!e.target.value) {
-                          fetchUserInfo();
+                          // fetchUserInfo();
                           setIsEmpty(true);
                         } else {
                           setLastName(e.target.value);
@@ -288,7 +283,7 @@ export default function Profile() {
                       defaultValue={oldEmail}
                       onChange={(e) => {
                         if (!e.target.value) {
-                          fetchUserInfo();
+                          // fetchUserInfo();
                           setIsEmpty(true);
                         } else {
                           setEmail(e.target.value);
