@@ -30,7 +30,6 @@ export default function Profile() {
   const [isEmpty, setIsEmpty] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
-  // TODO: make this useSWR
   const { data, error, mutate } = useSWR(["/profile", token], fetcher);
 
   React.useEffect(() => {
@@ -95,6 +94,7 @@ export default function Profile() {
         if (res.status === "error") {
           if (!isEditing) enqueueSnackbar(res.message, { variant: "error" });
         } else {
+          enqueueSnackbar("Successfully changed name", { variant: "success" });
           mutate();
         }
       });
@@ -113,6 +113,7 @@ export default function Profile() {
         if (res.status === "error") {
           if (!isEditing) enqueueSnackbar(res.message, { variant: "error" });
         } else {
+          enqueueSnackbar("Successfully changed email", { variant: "success" });
           mutate();
         }
       });
@@ -131,6 +132,10 @@ export default function Profile() {
       .then((res) => {
         if (res.status === "error") {
           if (!isEditing) enqueueSnackbar(res.message, { variant: "error" });
+        } else {
+          enqueueSnackbar("Successfully changed password", {
+            variant: "success",
+          });
         }
       });
   };

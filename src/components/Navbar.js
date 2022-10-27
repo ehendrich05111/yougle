@@ -31,8 +31,8 @@ export default function Navbar(props) {
             <AccountCircleOutlined />
           </IconButton>
         </Link>
-        <IconButton sx={{ marginRight: 2 }}>
-          <Logout onClick={signOut} />
+        <IconButton sx={{ marginRight: 2 }} onClick={signOut}>
+          <Logout />
         </IconButton>
       </div>
     </div>
