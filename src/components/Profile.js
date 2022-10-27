@@ -24,14 +24,8 @@ export default function Profile() {
   const [isEmpty, setIsEmpty] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  useEffect(() => {
-    if (!(firstName && lastName && oldEmail) || isSubmitted) {
-      fetchUserInfo();
-      setIsSubmitted(false);
-    }
-  }, [firstName, lastName, email]);
-
-  const fetchUserInfo = () => {
+  // TODO: make this useSWR
+  const fetchUserInfo = React.useCallback(() => {
     fetch(`${API_BASE}/profile`, {
       method: "GET",
       headers: { "Content-Type": "applications/json", Authorization: token },
@@ -46,7 +40,14 @@ export default function Profile() {
         setLastName(res.data.lastName);
         setOldEmail(res.data.email);
       });
-  };
+  }, [token]);
+
+  useEffect(() => {
+    if (!(firstName && lastName && oldEmail) || isSubmitted) {
+      fetchUserInfo();
+      setIsSubmitted(false);
+    }
+  }, [firstName, lastName, oldEmail, isSubmitted, fetchUserInfo]);
 
   const handleMainEdit = () => {
     if (isEditing) {

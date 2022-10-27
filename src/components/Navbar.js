@@ -32,7 +32,7 @@ export default function Navbar(props) {
           </IconButton>
         </Link>
         <IconButton sx={{ marginRight: 2 }}>
-          <Logout />
+          <Logout onClick={signOut} />
         </IconButton>
       </div>
     </div>
