@@ -14,7 +14,9 @@ export default function History() {
   const history = data?.data?.history;
   return (
     <FullPageCard navbar loading={!data && !error}>
-      <Typography variant="h5">Search History</Typography>
+      <Typography variant="h5" style={{ textAlign: "center" }}>
+        Search History
+      </Typography>
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
       <ol>
         {history?.map((item, idx) => (

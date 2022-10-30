@@ -42,7 +42,9 @@ export default function SavedMessages() {
 
   return (
     <FullPageCard navbar loading={!data && !error}>
-      <Typography variant="h5">Saved Messages</Typography>
+      <Typography variant="h5" style={{ textAlign: "center" }}>
+        Saved Messages
+      </Typography>
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
       {data && data?.data?.length === 0 ? (
         <Typography variant="body1">You have no saved messages.</Typography>
