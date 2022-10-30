@@ -131,6 +131,14 @@ export default function App() {
           }
         ></Route>
         <Route
+          path="/history"
+          element={
+            <AuthorizedRoute>
+              <Landing page={MainPages.History} />
+            </AuthorizedRoute>
+          }
+        ></Route>
+        <Route
           path="/profile"
           element={
             <AuthorizedRoute>
