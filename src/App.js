@@ -108,6 +108,7 @@ export default function App() {
         <Route path="/" element={<Navigate to="/search" />}></Route>
         {Object.values(MainPages).map((path) => (
           <Route
+            key={path}
             path={path}
             element={
               <AuthorizedRoute>

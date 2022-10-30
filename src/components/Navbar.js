@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { IconButton } from "@mui/material";
-import { AccountCircleOutlined, Logout } from "@mui/icons-material";
+import {
+  AccountCircleOutlined,
+  Logout,
+  SettingsOutlined,
+} from "@mui/icons-material";
 import { MainPages } from "./landing/Landing";
 
 export default function Navbar(props) {
@@ -17,15 +21,20 @@ export default function Navbar(props) {
     <div className="Navbar" style={{ backgroundColor: barColor }}>
       <div className="Bar">
         {Object.entries(MainPages).map(([name, path]) =>
-          name === "Profile" ? null : (
-            <Link to={path} className="Nav-link">
+          ["Profile", "Settings"].includes(name) ? null : (
+            <Link to={path} key={path} className="Nav-link">
               {name}
             </Link>
           )
         )}
       </div>
       <div id="account-buttons">
-        <Link to="/profile" className="Nav-link">
+        <Link to="/settings" className="Nav-link" style={{ paddingLeft: 0 }}>
+          <IconButton>
+            <SettingsOutlined />
+          </IconButton>
+        </Link>
+        <Link to="/profile" className="Nav-link" style={{ paddingLeft: 0 }}>
           <IconButton>
             <AccountCircleOutlined />
           </IconButton>
