@@ -143,6 +143,8 @@ export default function Search() {
       <div className="Main navbarpage">
         <img className="Yougle-logo" src={logo_full} alt="Yougle logo" />
         {searchBar}
+        <div className="Table-Results">
+        </div>
       </div>
     );
   }
@@ -164,7 +166,7 @@ export default function Search() {
         {searchBar}
       </Box>
       <Box
-        className="Table-Results" sx={{ display: "flex", flexDirection: "column", gap: 2, marginTop: 1 }}
+        sx={{ display: "flex", flexDirection: "column", gap: 2, marginTop: 1 }}
       >
         {data ? (
           <>

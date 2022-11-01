@@ -86,10 +86,10 @@ export const steps = [
   {
     id: "fifth-step",
     title: "Search Results",
-    text: ["Messages matching your search query will show up here. Star a message to save it."],
+    text: ["Messages matching your search query will show up below the search bar. Star a message to save it."],
     attachTo: {
       element: ".Table-Results",
-      on: "bottom",
+      on: "top",
     },
     buttons: [
       {
@@ -107,7 +107,7 @@ export const steps = [
   {
     id: "sixth-step",
     title: "Saved Messages",
-    text: ["Use the Saved page to view or remove saved messages."],
+    text: ["Use the Saved page to view saved messages or unsave messages."],
     attachTo: {
       element: ".Saved-Link",
       on: "bottom",
