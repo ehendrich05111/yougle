@@ -15,13 +15,13 @@ export default function Navbar(props) {
   return (
     <div className="Navbar" style={{ backgroundColor: barColor }}>
       <div className="Bar">
-        <Link to="/search" className="Nav-link">
+        <Link to="/search" className="Nav-link Search-Link">
           Search
         </Link>
-        <Link to="/services" className="Nav-link">
+        <Link to="/services" className="Nav-link Services-Link">
           Services
         </Link>
-        <Link to="/saved" className="Nav-link">
+        <Link to="/saved" className="Nav-link Saved-Link">
           Saved
         </Link>
       </div>

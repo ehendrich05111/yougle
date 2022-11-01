@@ -164,7 +164,7 @@ export default function Search() {
         {searchBar}
       </Box>
       <Box
-        sx={{ display: "flex", flexDirection: "column", gap: 2, marginTop: 1 }}
+        className="Table-Results" sx={{ display: "flex", flexDirection: "column", gap: 2, marginTop: 1 }}
       >
         {data ? (
           <>
