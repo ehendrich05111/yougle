@@ -5,13 +5,17 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { AuthProvider } from "./contexts/AuthContext";
 import { SnackbarProvider } from "notistack";
+import { ShepherdTour } from "react-shepherd";
+import { steps, tourOptions } from "./components/landing/Tour";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <SnackbarProvider maxSnack={3} autoHideDuration={5000}>
       <AuthProvider>
-        <App />
+        <ShepherdTour steps={steps} tourOptions={tourOptions}>
+          <App />
+        </ShepherdTour>
       </AuthProvider>
     </SnackbarProvider>
   </React.StrictMode>

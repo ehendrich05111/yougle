@@ -32,7 +32,8 @@ export default function Login() {
         setLoading(false);
         handleLogin("JWT " + res.data.token);
 
-        res.data.hasServices ? navigate("/") : navigate("/services");
+        //res.data.hasServices ? navigate("/") : navigate("/services");
+        navigate("/");
       })
       .catch((err) => {
         setLoading(false);

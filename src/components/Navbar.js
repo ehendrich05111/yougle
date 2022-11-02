@@ -22,7 +22,7 @@ export default function Navbar(props) {
       <div className="Bar">
         {Object.entries(MainPages).map(([name, path]) =>
           ["Profile", "Settings"].includes(name) ? null : (
-            <Link to={path} key={path} className="Nav-link">
+            <Link to={path} key={path} className={`Nav-link ${name}-Link`}>
               {name}
             </Link>
           )
