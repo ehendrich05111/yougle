@@ -1,4 +1,4 @@
-import { AccountCircle, ModeEdit } from "@mui/icons-material";
+import { AccountCircle, ModeEdit, Error } from "@mui/icons-material";
 import {
   Box,
   Card,
@@ -6,12 +6,123 @@ import {
   TextField,
   Alert,
   LinearProgress,
+  Dialog,
+  DialogTitle,
+  Slide,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { API_BASE, fetcher } from "../api/api";
 import { useAuth } from "../contexts/AuthContext";
+import PropTypes from "prop-types";
+
+// Account Deletion Dialog Animation
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+// Account Deletion Dialog
+const SimpleDialog = (props) => {
+  const { onDelete, open, progress } = props;
+
+  const handleCancel = () => {
+    onDelete(true);
+  };
+
+  const handleDelete = (event) => {
+    if (event.target.id === "conf-del") onDelete(false);
+  };
+
+  return (
+    <Dialog
+      onClose={handleCancel}
+      open={open}
+      TransitionComponent={Transition}
+      PaperProps={{
+        style: {
+          borderRadius: "15px",
+        },
+      }}
+    >
+      <DialogTitle
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "space-between",
+          fontSize: "1.5em",
+        }}
+      >
+        <Error
+          style={{
+            color: "rgba(255, 255, 255, 0.5)",
+            alignSelf: "center",
+            fontSize: "3em",
+            backgroundColor: "red",
+            padding: "7.5%",
+            borderRadius: "100%",
+          }}
+        />
+        <br />
+        &nbsp; Your account will be deleted in
+      </DialogTitle>
+      <p
+        style={{
+          textAlign: "center",
+          fontSize: "2em",
+          color: "white",
+          background: "rgba(255, 0, 0, 0.5)",
+          width: "3em",
+          alignSelf: "center",
+          borderRadius: "20px",
+        }}
+      >
+        {progress / 10}
+      </p>
+      <p style={{ textAlign: "center", color: "rgb(100, 100, 100)" }}>
+        You cannot undo this!
+      </p>
+      <Box style={{ display: "flex", justifyContent: "space-around" }}>
+        <Button
+          id="conf-del"
+          variant="contained"
+          style={{
+            backgroundColor: "red",
+            marginLeft: "5%",
+            marginBottom: "5%",
+            height: "20%",
+            width: "40%",
+          }}
+          onClick={handleDelete}
+        >
+          I'm Sure
+        </Button>
+        <Button
+          id="cancel-del"
+          variant="contained"
+          style={{
+            backgroundColor: "rgba(128, 128, 128, 0.25)",
+            color: "black",
+            marginRight: "5%",
+            marginBottom: "5%",
+            height: "20%",
+            width: "40%",
+          }}
+          onClick={handleCancel}
+        >
+          My Bad
+        </Button>
+      </Box>
+    </Dialog>
+  );
+};
+
+// Account Deletion Dialog props
+SimpleDialog.propTypes = {
+  onDelete: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  progress: PropTypes.number.isRequired,
+};
 
 export default function Profile() {
   const { token } = useAuth();
@@ -28,6 +139,9 @@ export default function Profile() {
   const [newPass, setNewPass] = useState("");
 
   const [isEmpty, setIsEmpty] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
+  const [isSure, setIsSure] = useState(false);
+  const [progress, setProgress] = useState(30);
   const { enqueueSnackbar } = useSnackbar();
 
   const { data, error, mutate } = useSWR(["/profile", token], fetcher);
@@ -35,7 +149,24 @@ export default function Profile() {
   React.useEffect(() => {
     setFirstName(data?.data?.firstName || "");
     setLastName(data?.data?.lastName || "");
-  }, [data]);
+
+    // Account Deletion Timer
+    const timer = setInterval(() => {
+      setProgress((oldProgress) => {
+        if (isSure) {
+          if (oldProgress === 0) {
+            handleDelete(false);
+            return 0;
+          }
+          return Math.max(oldProgress - 10, 0);
+        } else return 30;
+      });
+    }, 1000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [data, isSure]);
 
   if (error) {
     enqueueSnackbar(error.message, { variant: "error" });
@@ -45,6 +176,28 @@ export default function Profile() {
     return <LinearProgress />;
   }
   const oldEmail = data.data.email;
+
+  const handleDelete = (canceled) => {
+    setIsDelete(!isDelete);
+    if (!canceled) {
+      alert("Deleted"); // TODO: Replace this with actual fetch call
+      // fetch(`${API_BASE}/deleteAccount`, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json", Authorization: token },
+      // })
+      //   .then((res) => res.json())
+      //   .then((res) => {
+      //     if (res.status === "error") {
+      //       if (!isDelete) enqueueSnackbar(res.message, { variant: "error" });
+      //     } else {
+      //       enqueueSnackbar("Successfully changed email", { variant: "success" });
+      //       mutate();
+      //     }
+      //   });
+    } else {
+      setIsSure(!isSure);
+    }
+  };
 
   const handleMainEdit = () => {
     if (isEditing) {
@@ -148,19 +301,54 @@ export default function Profile() {
       <Box className="Acc-box">
         <Card
           className="Acc-card"
-          sx={{ borderRadius: "7px", boxShadow: "none" }}
+          sx={{ borderRadius: "15px", boxShadow: "none" }}
         >
           <Box style={{ display: "flex", justifyContent: "space-between" }}>
+            {/* {progress} */}
             <AccountCircle id="Acc-pic" />
+            <SimpleDialog
+              open={isDelete}
+              onDelete={handleDelete}
+              progress={progress}
+            />
             {isEditing ? (
-              <Button
-                variant="contained"
-                id="unedit-button"
-                style={{ marginTop: "10%", transform: "translate(0, 200%)" }}
-                onClick={handleMainEdit}
+              <Box
+                style={{
+                  display: "flex",
+                  justifyContent: "space-around",
+                  maxWidth: "70%",
+                }}
               >
-                Done
-              </Button>
+                <Button
+                  variant="contained"
+                  style={{
+                    marginTop: "10%",
+                    backgroundColor: "red",
+                    marginRight: "5%",
+                    height: "20%",
+                    width: "200px",
+                    transform: "translate(0, 325%)",
+                  }}
+                  onClick={() => {
+                    setIsSure(true);
+                    setIsDelete(true);
+                  }}
+                >
+                  Delete Acccount
+                </Button>
+                <Button
+                  variant="contained"
+                  id="unedit-button"
+                  style={{
+                    height: "20%",
+                    marginTop: "10%",
+                    transform: "translate(0, 325%)",
+                  }}
+                  onClick={handleMainEdit}
+                >
+                  Done
+                </Button>
+              </Box>
             ) : (
               <Button
                 variant="contained"
