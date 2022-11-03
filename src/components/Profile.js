@@ -187,9 +187,7 @@ export default function Profile() {
       })
         .then((res) => res.json())
         .then((res) => {
-          if (res.status === "error") {
-            enqueueSnackbar(res.message, { variant: "error" });
-          } else {
+          if (res.status !== "error") {
             mutate();
             navigate("/login");
           }
