@@ -14,3 +14,8 @@ export const fetcher = (path, token) =>
       Authorization: token,
     },
   }).then((res) => res.json());
+
+export const SERVICE_NAMES = {
+  slack: "Slack",
+  teams: "Microsoft Teams",
+};
