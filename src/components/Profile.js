@@ -16,6 +16,7 @@ import useSWR from "swr";
 import { API_BASE, fetcher } from "../api/api";
 import { useAuth } from "../contexts/AuthContext";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 // Account Deletion Dialog Animation
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -141,10 +142,11 @@ export default function Profile() {
   const [isEmpty, setIsEmpty] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [isSure, setIsSure] = useState(false);
-  const [progress, setProgress] = useState(30);
+  const [progress, setProgress] = useState(300);
   const { enqueueSnackbar } = useSnackbar();
 
   const { data, error, mutate } = useSWR(["/profile", token], fetcher);
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     setFirstName(data?.data?.firstName || "");
@@ -159,7 +161,7 @@ export default function Profile() {
             return 0;
           }
           return Math.max(oldProgress - 10, 0);
-        } else return 30;
+        } else return 300;
       });
     }, 1000);
 
@@ -178,25 +180,24 @@ export default function Profile() {
   const oldEmail = data.data.email;
 
   const handleDelete = (canceled) => {
-    setIsDelete(!isDelete);
-    if (!canceled) {
-      alert("Deleted"); // TODO: Replace this with actual fetch call
-      // fetch(`${API_BASE}/deleteAccount`, {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json", Authorization: token },
-      // })
-      //   .then((res) => res.json())
-      //   .then((res) => {
-      //     if (res.status === "error") {
-      //       if (!isDelete) enqueueSnackbar(res.message, { variant: "error" });
-      //     } else {
-      //       enqueueSnackbar("Successfully changed email", { variant: "success" });
-      //       mutate();
-      //     }
-      //   });
+    if (!canceled && isDelete) {
+      fetch(`${API_BASE}/deleteAccount`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json", Authorization: token },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.status === "error") {
+            enqueueSnackbar(res.message, { variant: "error" });
+          } else {
+            mutate();
+            navigate("/login");
+          }
+        });
     } else {
       setIsSure(!isSure);
     }
+    setIsDelete(!isDelete);
   };
 
   const handleMainEdit = () => {
