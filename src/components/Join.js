@@ -64,7 +64,7 @@ export default function Join() {
           }
           setLoading(false);
           setSuccessText(res.message);
-          navigate("/services");
+          navigate("/login");
         })
         .catch((err) => {
           setLoading(false);
