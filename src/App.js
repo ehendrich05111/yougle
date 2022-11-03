@@ -106,38 +106,17 @@ export default function App() {
         ></Route>
         <Route path="/signup" element={<Join />}></Route>
         <Route path="/" element={<Navigate to="/search" />}></Route>
-        <Route
-          path="/search"
-          element={
-            <AuthorizedRoute>
-              <Landing page={MainPages.Search} />
-            </AuthorizedRoute>
-          }
-        ></Route>
-        <Route
-          path="/services"
-          element={
-            <AuthorizedRoute>
-              <Landing page={MainPages.Services} />
-            </AuthorizedRoute>
-          }
-        ></Route>
-        <Route
-          path="/saved"
-          element={
-            <AuthorizedRoute>
-              <Landing page={MainPages.Saved} />
-            </AuthorizedRoute>
-          }
-        ></Route>
-        <Route
-          path="/profile"
-          element={
-            <AuthorizedRoute>
-              <Landing page={MainPages.Profile} />
-            </AuthorizedRoute>
-          }
-        ></Route>
+        {Object.values(MainPages).map((path) => (
+          <Route
+            key={path}
+            path={path}
+            element={
+              <AuthorizedRoute>
+                <Landing page={path} />
+              </AuthorizedRoute>
+            }
+          />
+        ))}
       </Routes>
     </Router>
   );
