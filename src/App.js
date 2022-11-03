@@ -104,6 +104,10 @@ export default function App() {
           path="/slack_callback"
           element={<OAuthCallback serviceName="slack" />}
         ></Route>
+        <Route
+          path="/teams_callback"
+          element={<OAuthCallback serviceName="teams" />}
+        ></Route>
         <Route path="/signup" element={<Join />}></Route>
         <Route path="/" element={<Navigate to="/search" />}></Route>
         {Object.values(MainPages).map((path) => (
