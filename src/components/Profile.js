@@ -181,7 +181,7 @@ export default function Profile() {
 
   const handleDelete = (canceled) => {
     if (!canceled && isDelete) {
-      fetch(`${API_BASE}/deleteAccount`, {
+      fetch(`${API_BASE}/deleteAccount/profile`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json", Authorization: token },
       })
