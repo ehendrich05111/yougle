@@ -18,9 +18,11 @@ export default function History() {
         Search History
       </Typography>
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-      <ol>
+      <ol className="history-box">
         {history?.map((item, idx) => (
-          <li key={idx}>{item}</li>
+          <li>
+            <div className="history-item">{item}</div>
+          </li>
         ))}
       </ol>
     </FullPageCard>

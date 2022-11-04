@@ -35,6 +35,7 @@ export default function FullPageCard({ loading, navbar, children }) {
               position: "relative",
               opacity: loading ? "0.7" : "1",
               maxWidth: 400,
+              maxHeight: 725,
               boxSizing: "border-box",
             }}
           >
