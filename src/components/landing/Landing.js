@@ -4,14 +4,16 @@ import Services from "./Services";
 import Navbar from "../Navbar";
 import Profile from "../Profile";
 import SavedMessages from "./SavedMessages";
+import History from "./History";
 import Settings from "./Settings";
 
 export const MainPages = {
   Search: "/search",
   Services: "/services",
   Saved: "/saved",
-  Settings: "/settings",
   Profile: "/profile",
+  History: "/history",
+  Settings: "/settings",
 };
 
 export default function Landing(props) {
@@ -24,6 +26,8 @@ export default function Landing(props) {
     content = <SavedMessages />;
   } else if (props.page === MainPages.Profile) {
     content = <Profile />;
+  } else if (props.page === MainPages.History) {
+    content = <History />;
   } else if (props.page === MainPages.Settings) {
     content = <Settings />;
   } else {

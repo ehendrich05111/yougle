@@ -1,40 +1,54 @@
-import { Box, Card, LinearProgress } from "@mui/material";
+import { Card, LinearProgress } from "@mui/material";
 
 export default function FullPageCard({ loading, navbar, children }) {
+  // don't go above a certain height: https://stackoverflow.com/a/19976062
   return (
-    <Box
-      className={navbar ? "navbarpage" : ""}
-      sx={{
-        height: navbar ? undefined : "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+    <div
+      style={{
+        width: "100%",
+        height: "100vh",
+        padding: "4em 0",
+        marginTop: navbar ? "-8em" : "-4em",
+        boxSizing: "border-box",
       }}
     >
-      <Card
-        variant="outlined"
-        sx={{
-          marginX: 2,
-          paddingX: 5,
-          paddingBottom: 5,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          gap: 1,
-          position: "relative",
-          opacity: loading ? "0.7" : "1",
-          maxWidth: 400,
+      <div
+        style={{
+          display: "table",
+          width: "100%",
+          height: "100%",
+          marginTop: "4em",
+          boxSizing: "border-box",
         }}
       >
-        <LinearProgress
-          sx={{
-            marginX: -5,
-            visibility: loading ? "visible" : "hidden",
-            opacity: "100%",
-          }}
-        />
-        {children}
-      </Card>
-    </Box>
+        <div style={{ display: "table-cell", verticalAlign: "middle" }}>
+          <Card
+            variant="outlined"
+            sx={{
+              margin: "0 auto",
+              paddingX: 5,
+              paddingBottom: 4,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              gap: 1,
+              position: "relative",
+              opacity: loading ? "0.7" : "1",
+              maxWidth: 400,
+              boxSizing: "border-box",
+            }}
+          >
+            <LinearProgress
+              sx={{
+                marginX: -5,
+                visibility: loading ? "visible" : "hidden",
+                opacity: "100%",
+              }}
+            />
+            {children}
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 }

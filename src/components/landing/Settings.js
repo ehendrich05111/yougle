@@ -94,9 +94,6 @@ export default function Settings() {
           >
             Save settings
           </Button>
-          <Button variant="contained" color="error">
-            Delete account
-          </Button>
         </>
       )}
     </FullPageCard>

@@ -4,9 +4,11 @@ import FullPageCard from "./FullPageCard";
 import logo_full from "../images/logo_full.png";
 import { Checkbox, FormControlLabel } from "@mui/material";
 import { Box, Button, TextField, Alert } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export default function Join() {
   // TODO: allow form to be submitted with enter
+  const navigate = useNavigate();
 
   const [email, setEmail] = React.useState("");
   const [lastName, setLastName] = React.useState("");
@@ -62,6 +64,7 @@ export default function Join() {
           }
           setLoading(false);
           setSuccessText(res.message);
+          navigate("/login");
         })
         .catch((err) => {
           setLoading(false);

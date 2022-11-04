@@ -109,6 +109,7 @@
   height: 4em;
   /* border-radius: 0 0 1vw 1vw; */
   box-shadow: 1px 1px 4px #282c3422;
+  box-sizing: border-box;
 }
 
 .Bar {
