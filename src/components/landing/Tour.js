@@ -9,6 +9,26 @@ export const tourOptions = {
 
 export const steps = [
   {
+    id: "zeroth-step",
+    title: "Welcome back!",
+    text: ["It's been a while since you've last logged in. Would you like a tour?"],
+    buttons: [
+      {
+        classes: "shepherd-button-primary",
+        text: "No",
+        type: "cancel",
+      },
+      {
+        classes: "shepherd-button-primary",
+        text: "Yes",
+        type: "next",
+        action: () => {
+          localStorage.removeItem("shepherd-tour");
+        },
+      },
+    ],
+  },
+  {
     id: "first-step",
     title: "Welcome to Yougle!",
     text: ["Here's a quick tour of what you can do."],
@@ -127,6 +147,48 @@ export const steps = [
   },
   {
     id: "seventh-step",
+    title: "Settings Page",
+    text: ["Use the settings page to toggle settings such as saving search history, dark theme, etc."],
+    attachTo: {
+      element: ".Settings-Link",
+      on: "bottom",
+    },
+    buttons: [
+      {
+        classes: "shepherd-button-primary",
+        text: "Back",
+        type: "back",
+      },
+      {
+        classes: "shepherd-button-primary",
+        text: "Next",
+        type: "next",
+      }
+    ],
+  },
+  {
+    id: "eighth-step",
+    title: "Profile Page",
+    text: ["Use the profile page to edit your account information."],
+    attachTo: {
+      element: ".Profile-Link",
+      on: "bottom",
+    },
+    buttons: [
+      {
+        classes: "shepherd-button-primary",
+        text: "Back",
+        type: "back",
+      },
+      {
+        classes: "shepherd-button-primary",
+        text: "Next",
+        type: "next",
+      }
+    ],
+  },
+  {
+    id: "ninth-step",
     title: "Switch Between Tabs",
     text: ["You can use the navigation bar at the top to switch between pages."],
     attachTo: {
@@ -147,7 +209,7 @@ export const steps = [
     ],
   },
   {
-    id: "eighth-step",
+    id: "tenth-step",
     title: "Let's Start Searching!",
     text: ["Get started by connecting your first service."],
     buttons: [
@@ -159,12 +221,10 @@ export const steps = [
       {
         classes: "shepherd-button-primary",
         text: "Connect a Service",
-        action: tourFunction,
+        action: () => {
+          window.location.href="/Services";
+        },
       },
     ],
   },
 ];
-
-function tourFunction() {
-  window.location.href="/Services";
-}

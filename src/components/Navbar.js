@@ -30,12 +30,12 @@ export default function Navbar(props) {
       </div>
       <div id="account-buttons">
         <Link to="/settings" className="Nav-link" style={{ paddingLeft: 0 }}>
-          <IconButton>
+          <IconButton className="Settings-Link">
             <SettingsOutlined />
           </IconButton>
         </Link>
         <Link to="/profile" className="Nav-link" style={{ paddingLeft: 0 }}>
-          <IconButton>
+          <IconButton className="Profile-Link">
             <AccountCircleOutlined />
           </IconButton>
         </Link>

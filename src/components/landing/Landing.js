@@ -23,6 +23,12 @@ export default function Landing(props) {
     if (tour && !localStorage.getItem("shepherd-tour")) {
       tour.start();
       localStorage.setItem("shepherd-tour", "yes");
+
+      //skip initial prompt if not enough time between logins
+      if (!localStorage.getItem("return-tour")) {
+        tour.show("first-step");
+      }
+      localStorage.removeItem("return-tour");
     }
   }, [tour]);
 

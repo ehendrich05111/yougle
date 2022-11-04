@@ -12,6 +12,7 @@ import { API_BASE, fetcher } from "../../api/api";
 import { useAuth } from "../../contexts/AuthContext";
 import FullPageCard from "../FullPageCard";
 
+
 export default function Settings() {
   const { token } = useAuth();
   const { data, error, mutate } = useSWR(["/settings", token], fetcher);
@@ -19,6 +20,13 @@ export default function Settings() {
   const [settings, setSettings] = React.useState(undefined);
 
   // TODO: add disable history switch
+
+  function ReplayTour() {
+    localStorage.removeItem("shepherd-tour");
+    window.location.href="/";
+    //const tour = React.useContext(ShepherdTourContext);
+    //tour.start();
+  }
 
   const onSaveSettings = () => {
     fetch(`${API_BASE}/settings`, {
@@ -60,6 +68,12 @@ export default function Settings() {
       </Typography>
       {settings && (
         <>
+          <Button
+            variant="outlined"
+            onClick={ReplayTour}
+          >
+            Replay Tour
+          </Button>
           <FormGroup>
             <FormControlLabel
               control={
