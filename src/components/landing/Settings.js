@@ -256,6 +256,20 @@ export default function Settings() {
               }
               label="Deep search"
             />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={settings.trackHistory}
+                  onChange={(event) =>
+                    setSettings({
+                      ...settings,
+                      trackHistory: event.target.checked,
+                    })
+                  }
+                />
+              }
+              label="Track history"
+            />
           </FormGroup>
           <SimpleDialog open={isClear} onClear={onClearHistory} />
           <Button
