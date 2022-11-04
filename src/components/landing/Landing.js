@@ -1,4 +1,5 @@
 import React from "react";
+import { ShepherdTourContext } from "react-shepherd";
 import Search from "./Search";
 import Services from "./Services";
 import Navbar from "../Navbar";
@@ -17,6 +18,22 @@ export const MainPages = {
 };
 
 export default function Landing(props) {
+  const tour = React.useContext(ShepherdTourContext);
+
+  React.useEffect(() => {
+    //show tour first time visiting landing page
+    if (tour && !localStorage.getItem("shepherd-tour")) {
+      tour.start();
+      localStorage.setItem("shepherd-tour", "yes");
+
+      //skip initial prompt if not enough time between logins
+      if (!localStorage.getItem("return-tour")) {
+        tour.show("first-step");
+      }
+      localStorage.removeItem("return-tour");
+    }
+  }, [tour]);
+
   var content = null;
   if (props.page === MainPages.Search) {
     content = <Search />;

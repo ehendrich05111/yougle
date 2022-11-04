@@ -146,6 +146,8 @@ export default function Search() {
       <div className="Main navbarpage">
         <img className="Yougle-logo" src={logo_full} alt="Yougle logo" />
         {searchBar}
+        <div className="Table-Results">
+        </div>
       </div>
     );
   }

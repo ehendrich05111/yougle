@@ -118,6 +118,7 @@ SimpleDialog.propTypes = {
   onClear: PropTypes.func.isRequired,
 };
 
+
 export default function Settings() {
   const { token } = useAuth();
   const { data, error, mutate } = useSWR(["/settings", token], fetcher);
@@ -146,6 +147,13 @@ export default function Settings() {
         enqueueSnackbar(err.message, { variant: "error" });
       });
   }, [isClear]);
+
+  function ReplayTour() {
+    localStorage.removeItem("shepherd-tour");
+    window.location.href="/";
+    //const tour = React.useContext(ShepherdTourContext);
+    //tour.start();
+  }
 
   const onSaveSettings = () => {
     fetch(`${API_BASE}/settings`, {
@@ -220,6 +228,12 @@ export default function Settings() {
       </Typography>
       {settings && (
         <>
+          <Button
+            variant="outlined"
+            onClick={ReplayTour}
+          >
+            Replay Tour
+          </Button>
           <FormGroup>
             <FormControlLabel
               control={

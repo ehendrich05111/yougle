@@ -32,7 +32,17 @@ export default function Login() {
         setLoading(false);
         handleLogin("JWT " + res.data.token);
 
-        res.data.hasServices ? navigate("/") : navigate("/services");
+        //check to display tour for new user
+        if (res.data.firstSignIn) {
+          localStorage.removeItem("shepherd-tour");
+        }
+
+        //check to display tour for returning user after long time (30 days)
+        if (res.data.daysSinceLastSignIn > 30) {
+          localStorage.removeItem("shepherd-tour");
+          localStorage.setItem("return-tour", "yes");
+        }
+        navigate("/");
       })
       .catch((err) => {
         setLoading(false);
