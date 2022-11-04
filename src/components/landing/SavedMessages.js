@@ -2,7 +2,7 @@ import { Delete } from "@mui/icons-material";
 import { Alert, Card, IconButton, Link, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import useSWR from "swr";
-import { API_BASE, fetcher } from "../../api/api";
+import { API_BASE, fetcher, SERVICE_NAMES } from "../../api/api";
 import { useAuth } from "../../contexts/AuthContext";
 import FullPageCard from "../FullPageCard";
 
@@ -33,7 +33,7 @@ export default function SavedMessages() {
         });
         enqueueSnackbar("Message deleted.", { variant: "success" });
       })
-      .error((err) => {
+      .catch((err) => {
         enqueueSnackbar(`Error deleting message: ${err.message}`, {
           variant: "error",
         });
@@ -58,10 +58,15 @@ export default function SavedMessages() {
           >
             <Delete />
           </IconButton>
+          <Typography variant="body1">
+            <b>Service:</b> {SERVICE_NAMES[message.service]}
+          </Typography>
           <p>{message.result}</p>
-          <Link href={message.reference} target="_blank">
-            View message directly
-          </Link>
+          {message.reference ? (
+            <Link href={message.reference} target="_blank">
+              View message directly
+            </Link>
+          ) : null}
         </Card>
       ))}
     </FullPageCard>
