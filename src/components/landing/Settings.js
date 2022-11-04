@@ -1,24 +1,151 @@
 import {
   Button,
+  Dialog,
+  DialogTitle,
   FormControlLabel,
   FormGroup,
+  Slide,
   Switch,
   Typography,
+  Box,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { API_BASE, fetcher } from "../../api/api";
 import { useAuth } from "../../contexts/AuthContext";
 import FullPageCard from "../FullPageCard";
+import PropTypes from "prop-types";
+import { Warning } from "@mui/icons-material";
+
+// Clear History Dialog Animation
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+// Clear History Dialog
+const SimpleDialog = (props) => {
+  const { onClear, open } = props;
+
+  const handleCancel = () => {
+    onClear(false);
+  };
+
+  const handleDelete = (event) => {
+    if (event.target.id === "conf-del") onClear(true);
+  };
+
+  return (
+    <Dialog
+      onClose={handleCancel}
+      open={open}
+      TransitionComponent={Transition}
+      PaperProps={{
+        style: {
+          borderRadius: "15px",
+        },
+      }}
+    >
+      <DialogTitle
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "space-between",
+          fontSize: "1.5em",
+        }}
+      >
+        <Warning
+          style={{
+            color: "rgba(255, 255, 255, 0.5)",
+            alignSelf: "center",
+            fontSize: "3em",
+            backgroundColor: "orange",
+            marginTop: "5%",
+            padding: "7.5%",
+            borderRadius: "100%",
+            overflow: "visible",
+          }}
+        />
+        <p style={{ margin: "20px" }}>Your history will be cleared</p>
+      </DialogTitle>
+      <p
+        style={{
+          textAlign: "center",
+          color: "rgb(100, 100, 100)",
+          transform: "translateY(-10px)",
+        }}
+      >
+        You cannot undo this!
+      </p>
+      <Box style={{ display: "flex", justifyContent: "space-around" }}>
+        <Button
+          id="conf-del"
+          variant="contained"
+          style={{
+            backgroundColor: "red",
+            marginLeft: "5%",
+            marginBottom: "5%",
+            height: "20%",
+            width: "40%",
+          }}
+          onClick={handleDelete}
+        >
+          I'm Sure
+        </Button>
+        <Button
+          id="cancel-del"
+          variant="contained"
+          style={{
+            backgroundColor: "rgba(128, 128, 128, 0.25)",
+            color: "black",
+            marginRight: "5%",
+            marginBottom: "5%",
+            height: "20%",
+            width: "40%",
+          }}
+          onClick={handleCancel}
+        >
+          My Bad
+        </Button>
+      </Box>
+    </Dialog>
+  );
+};
+
+// Clear History Dialog props
+SimpleDialog.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClear: PropTypes.func.isRequired,
+};
 
 export default function Settings() {
   const { token } = useAuth();
   const { data, error, mutate } = useSWR(["/settings", token], fetcher);
   const { enqueueSnackbar } = useSnackbar();
-  const [settings, setSettings] = React.useState(undefined);
+  const [settings, setSettings] = useState(undefined);
+  const [isClear, setIsClear] = useState(false);
+  const [isHistory, setIsHistory] = useState(false);
 
-  // TODO: add disable history switch
+  useEffect(() => {
+    fetch(`${API_BASE}/searchHistory`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.error) {
+          enqueueSnackbar(res.error, { variant: "error" });
+        } else {
+          setIsHistory(res.data.history.length !== 0);
+        }
+      })
+      .catch((err) => {
+        enqueueSnackbar(err.message, { variant: "error" });
+      });
+  }, [isClear]);
 
   const onSaveSettings = () => {
     fetch(`${API_BASE}/settings`, {
@@ -41,6 +168,39 @@ export default function Settings() {
       .catch((err) => {
         enqueueSnackbar(err.message, { variant: "error" });
       });
+  };
+
+  const onClearHistory = (confClear) => {
+    if (confClear) {
+      fetch(`${API_BASE}/searchHistory`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.error) {
+            enqueueSnackbar(res.error, { variant: "error" });
+          } else {
+            if (res.message === null) {
+              enqueueSnackbar("Your history is now history", {
+                variant: "success",
+              });
+            } else {
+              enqueueSnackbar(res.message, {
+                variant: "info",
+              });
+            }
+            mutate();
+          }
+        })
+        .catch((err) => {
+          enqueueSnackbar(err.message, { variant: "error" });
+        });
+    }
+    setIsClear(!isClear);
   };
 
   React.useEffect(() => {
@@ -87,6 +247,17 @@ export default function Settings() {
               label="Deep search"
             />
           </FormGroup>
+          <SimpleDialog open={isClear} onClear={onClearHistory} />
+          <Button
+            variant="contained"
+            style={{ backgroundColor: "red" }}
+            disabled={!isHistory}
+            onClick={() => {
+              setIsClear(true);
+            }}
+          >
+            Clear History
+          </Button>
           <Button
             variant="outlined"
             disabled={settings === data?.data}
