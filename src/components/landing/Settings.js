@@ -118,7 +118,6 @@ SimpleDialog.propTypes = {
   onClear: PropTypes.func.isRequired,
 };
 
-
 export default function Settings() {
   const { token } = useAuth();
   const { data, error, mutate } = useSWR(["/settings", token], fetcher);
@@ -146,11 +145,11 @@ export default function Settings() {
       .catch((err) => {
         enqueueSnackbar(err.message, { variant: "error" });
       });
-  }, [isClear]);
+  }, [isClear, enqueueSnackbar, token]);
 
   function ReplayTour() {
     localStorage.removeItem("shepherd-tour");
-    window.location.href="/";
+    window.location.href = "/";
     //const tour = React.useContext(ShepherdTourContext);
     //tour.start();
   }
@@ -228,10 +227,7 @@ export default function Settings() {
       </Typography>
       {settings && (
         <>
-          <Button
-            variant="outlined"
-            onClick={ReplayTour}
-          >
+          <Button variant="outlined" onClick={ReplayTour}>
             Replay Tour
           </Button>
           <FormGroup>
@@ -264,7 +260,7 @@ export default function Settings() {
           <SimpleDialog open={isClear} onClear={onClearHistory} />
           <Button
             variant="contained"
-            style={{ backgroundColor: "red" }}
+            color="error"
             disabled={!isHistory}
             onClick={() => {
               setIsClear(true);
