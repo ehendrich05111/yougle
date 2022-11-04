@@ -18,13 +18,20 @@ export default function History() {
         Search History
       </Typography>
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-      <ol className="history-box">
-        {history?.map((item, idx) => (
-          <li>
-            <div className="history-item">{item}</div>
-          </li>
-        ))}
-      </ol>
+      {data && history?.length === 0 ? (
+        <Typography variant="body1" style={{ textAlign: "center" }}>
+          You haven't searched for anything yet!
+        </Typography>
+      ) : null}
+      {data && history.length > 0 ? (
+        <ol className="history-box">
+          {history?.map((item, idx) => (
+            <li>
+              <div className="history-item">{item}</div>
+            </li>
+          ))}
+        </ol>
+      ) : null}
     </FullPageCard>
   );
 }
