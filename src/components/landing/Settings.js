@@ -43,6 +43,37 @@ export default function Settings() {
       });
   };
 
+  const onClearHistory = () => {
+    fetch(`${API_BASE}/searchHistory`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      body: JSON.stringify(settings),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.error) {
+          enqueueSnackbar(res.error, { variant: "error" });
+        } else {
+          if (res.message === null) {
+            enqueueSnackbar("Your history is now history", {
+              variant: "success",
+            });
+          } else {
+            enqueueSnackbar(res.message, {
+              variant: "info",
+            });
+          }
+          mutate();
+        }
+      })
+      .catch((err) => {
+        enqueueSnackbar(err.message, { variant: "error" });
+      });
+  };
+
   React.useEffect(() => {
     setSettings(data?.data);
   }, [data?.data]);
@@ -87,6 +118,14 @@ export default function Settings() {
               label="Deep search"
             />
           </FormGroup>
+          <Button
+            variant="contained"
+            style={{ backgroundColor: "red" }}
+            // disabled={data.data.history.length}
+            onClick={onClearHistory}
+          >
+            Clear History
+          </Button>
           <Button
             variant="outlined"
             disabled={settings === data?.data}
