@@ -29,12 +29,6 @@ export function SearchBar(props) {
       });
   };
 
-  const handleHistorySelect = (item) => {
-    console.log(item);
-    // setQuery(item);
-    // submitQuery(item);
-  };
-
   const submitQuery = () => {
     props.onSubmit(query);
   };
@@ -62,9 +56,9 @@ export function SearchBar(props) {
             getHistory();
             setShowHistory(true);
           }}
-          onBlur={() => {
-            setShowHistory(false);
-          }}
+          // onBlur={() => {
+          //   setShowHistory(false);
+          // }}
         />
         <IconButton
           type="button"
@@ -83,15 +77,19 @@ export function SearchBar(props) {
             marginLeft: "1px",
             boxShadow: "0 1px 2px rgba(0, 0, 0, 0.15)",
             zIndex: 1,
-            // boxShadow: "none",
-            // borderWidth: "thin",
           }}
         >
           <div className="Search-Hist-List">
-            {history.map((item) => (
+            {/* TODO: Fix indexing issue and OnBlur() */}
+            {history.map((item, idx) => (
               <button
-                // onClick={handleHistorySelect(item)} // NEED TO FIX
+                onClick={() => {
+                  console.log(item);
+                  setQuery(item);
+                  submitQuery();
+                }}
                 className="Search-Hist-Item"
+                key={idx}
               >
                 {item}
               </button>
