@@ -29,6 +29,12 @@ export function SearchBar(props) {
       });
   };
 
+  const handleHistorySelect = (item) => {
+    console.log(item);
+    // setQuery(item);
+    // submitQuery(item);
+  };
+
   const submitQuery = () => {
     props.onSubmit(query);
   };
@@ -75,13 +81,20 @@ export function SearchBar(props) {
             position: "absolute",
             borderRadius: "0 0 10px 10px",
             marginLeft: "1px",
+            boxShadow: "0 1px 2px rgba(0, 0, 0, 0.15)",
+            zIndex: 1,
             // boxShadow: "none",
             // borderWidth: "thin",
           }}
         >
           <div className="Search-Hist-List">
-            {history.map((item, idx) => (
-              <div>{item}</div>
+            {history.map((item) => (
+              <button
+                // onClick={handleHistorySelect(item)} // NEED TO FIX
+                className="Search-Hist-Item"
+              >
+                {item}
+              </button>
             ))}
           </div>
         </Card>
