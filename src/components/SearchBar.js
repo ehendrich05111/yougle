@@ -4,7 +4,7 @@ import { Card, Paper, InputBase, IconButton } from "@mui/material";
 import { API_BASE } from "../api/api";
 import { useAuth } from "../contexts/AuthContext";
 
-const historyLength = 8;
+const historyLength = 6;
 
 export function SearchBar(props) {
   const [query, setQuery] = useState(props.query || "");
@@ -20,11 +20,15 @@ export function SearchBar(props) {
       .then((res) => res.json())
       .then((res) => {
         if (res.status === "success") {
-          const tempHist = res.data.history.slice(
-            res.data.history.length - historyLength,
-            res.data.history.length
-          );
-          setHistory(tempHist);
+          // Handle case when number of entries is less than the max
+          // display size
+          if (res.data.history.length > historyLength) {
+            const tempHist = res.data.history.slice(
+              res.data.history.length - historyLength,
+              res.data.history.length
+            );
+            setHistory(tempHist);
+          } else setHistory(res.data.history);
         }
       });
   };
@@ -34,7 +38,20 @@ export function SearchBar(props) {
   };
 
   return (
-    <div>
+    <div
+      onFocus={() => {
+        getHistory();
+        setShowHistory(true);
+      }}
+      onMouseDown={(e) => {
+        if (e.target.className === "Search-Hist-Item") e.preventDefault();
+      }}
+      onBlur={(e) => {
+        e.preventDefault();
+        console.log(e);
+        setShowHistory(false);
+      }}
+    >
       <Paper
         component="form"
         variant="outlined"
@@ -52,13 +69,6 @@ export function SearchBar(props) {
           value={query || ""}
           inputProps={{ "aria-label": "search your chats..." }}
           onChange={(event) => setQuery(event.target.value)}
-          onFocus={() => {
-            getHistory();
-            setShowHistory(true);
-          }}
-          // onBlur={() => {
-          //   setShowHistory(false);
-          // }}
         />
         <IconButton
           type="button"
@@ -83,10 +93,12 @@ export function SearchBar(props) {
             {/* TODO: Fix indexing issue and OnBlur() */}
             {history.map((item, idx) => (
               <button
+                // onFocus
+                // Onblur related target e console log
+                // e.preventDefault()
+                // call something to pass to the next handler
                 onClick={() => {
-                  console.log(item);
-                  setQuery(item);
-                  submitQuery();
+                  props.onSubmit(item);
                 }}
                 className="Search-Hist-Item"
                 key={idx}
