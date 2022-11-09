@@ -27,8 +27,8 @@ export function SearchBar(props) {
               res.data.history.length - historyLength,
               res.data.history.length
             );
-            setHistory(tempHist);
-          } else setHistory(res.data.history);
+            setHistory(tempHist.reverse());
+          } else setHistory(res.data.history.reverse());
         }
       });
   };
@@ -40,15 +40,20 @@ export function SearchBar(props) {
   return (
     <div
       onFocus={() => {
-        getHistory();
         setShowHistory(true);
       }}
       onMouseDown={(e) => {
-        if (e.target.className === "Search-Hist-Item") e.preventDefault();
+        getHistory();
+        if (e.target.className === "Search-Hist-Item") {
+          e.preventDefault();
+        } else if (
+          e.target.className ===
+          "MuiInputBase-input css-yz9k0d-MuiInputBase-input"
+        ) {
+          setShowHistory(true);
+        }
       }}
       onBlur={(e) => {
-        e.preventDefault();
-        console.log(e);
         setShowHistory(false);
       }}
     >
@@ -95,7 +100,7 @@ export function SearchBar(props) {
                 onClick={() => {
                   setQuery(item);
                   props.onSubmit(item);
-                  // setShowHistory(false);
+                  setShowHistory(false);
                 }}
                 className="Search-Hist-Item"
                 key={idx}
