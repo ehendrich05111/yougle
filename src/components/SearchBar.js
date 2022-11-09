@@ -1,19 +1,24 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect, useReducer, useMemo } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { Card, Paper, InputBase, IconButton } from "@mui/material";
-import { API_BASE } from "../api/api";
+import { fetcher } from "../api/api";
 import { useAuth } from "../contexts/AuthContext";
 import { Clear } from "@mui/icons-material";
+import useSWR from "swr";
 
 const historyLength = 6;
 
 export function SearchBar(props) {
+  const { token } = useAuth();
+  const { data } = useSWR(["/searchHistory", token], fetcher);
   const [query, setQuery] = useState(props.query || "");
   const [showHistory, setShowHistory] = useState(false);
-  const [history, setHistory] = useState([]);
-  const { token } = useAuth();
 
   const initialState = { selectedIndex: -1 };
+
+  const history = useMemo(() => {
+    return (data?.data?.history || []).slice(-historyLength).reverse();
+  }, [data?.data?.history]);
 
   const reducer = (state, action) => {
     switch (action.type) {
@@ -66,27 +71,6 @@ export function SearchBar(props) {
     return keyPressed;
   };
 
-  const getHistory = () => {
-    fetch(`${API_BASE}/searchHistory/`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: token },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.status === "success") {
-          // Handle case when number of entries is less than the max
-          // display size
-          if (res.data.history.length > historyLength) {
-            const tempHist = res.data.history.slice(
-              res.data.history.length - historyLength,
-              res.data.history.length
-            );
-            setHistory(tempHist.reverse());
-          } else setHistory(res.data.history.reverse());
-        }
-      });
-  };
-
   // TODO: Complete this once backend for Story #31 is complete
   const delHistoryItem = () => {
     console.log("Deleted!");
@@ -125,7 +109,6 @@ export function SearchBar(props) {
         setShowHistory(true);
       }}
       onMouseDown={(e) => {
-        getHistory();
         if (
           e.target.className !==
           "MuiInputBase-input css-yz9k0d-MuiInputBase-input"
@@ -173,7 +156,7 @@ export function SearchBar(props) {
             borderRadius: "0 0 10px 10px",
             marginLeft: "1px",
             boxShadow: "0 1px 2px rgba(0, 0, 0, 0.15)",
-            zIndex: 1,
+            zIndex: 2, // required so mouseleave doesn't fire when hovering over covered checkbox
           }}
         >
           <div className="Search-Hist-List">
@@ -186,6 +169,13 @@ export function SearchBar(props) {
                     idx === state.selectedIndex ? "rgba(0,0,0, 0.25)" : "white",
                 }}
                 key={idx}
+                onMouseEnter={(e) => {
+                  e.stopPropagation();
+                  dispatch({ type: "select", payload: idx });
+                }}
+                onMouseLeave={() => {
+                  dispatch({ type: "select", payload: -1 });
+                }}
               >
                 <button
                   onClick={() => {

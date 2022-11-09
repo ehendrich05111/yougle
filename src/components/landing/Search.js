@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { SearchBar } from "../SearchBar";
 import logo_full from "../../images/logo_full.png";
 import { useSearchParams } from "react-router-dom";
@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { API_BASE, fetcher, SERVICE_NAMES } from "../../api/api";
 import { useAuth } from "../../contexts/AuthContext";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import slack_icon from "../../images/slack_icon.jpeg";
 import teams_icon from "../../images/teams_icon.png";
 import { InsertLink, Star, StarBorderOutlined } from "@mui/icons-material";
@@ -112,6 +112,26 @@ export default function Search() {
     fetcher
   );
 
+  // mutate search history upon data arrival
+  const { mutate } = useSWRConfig();
+
+  useEffect(() => {
+    if (data) {
+      mutate(["/searchHistory", token], (data) => {
+        if (!data?.data?.history) {
+          return data;
+        }
+        return {
+          ...data,
+          data: {
+            ...data.data,
+            history: [...data.data.history, query],
+          },
+        };
+      });
+    }
+  }, [query, data, token, mutate]);
+
   function onSave(searchResult) {
     const savedMessage = savedMessageData?.data?.find(
       (msg) => msg.id === searchResult.id
@@ -180,8 +200,7 @@ export default function Search() {
       <div className="Main navbarpage">
         <img className="Yougle-logo" src={logo_full} alt="Yougle logo" />
         {searchBar}
-        <div className="Table-Results">
-        </div>
+        <div className="Table-Results"></div>
       </div>
     );
   }
