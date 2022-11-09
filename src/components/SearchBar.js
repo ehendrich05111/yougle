@@ -90,13 +90,8 @@ export function SearchBar(props) {
           }}
         >
           <div className="Search-Hist-List">
-            {/* TODO: Fix indexing issue and OnBlur() */}
             {history.map((item, idx) => (
               <button
-                // onFocus
-                // Onblur related target e console log
-                // e.preventDefault()
-                // call something to pass to the next handler
                 onClick={() => {
                   props.onSubmit(item);
                 }}
