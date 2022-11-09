@@ -113,6 +113,12 @@ export function SearchBar(props) {
     }
   }, [arrowDownPressed]);
 
+  useEffect(() => {
+    if (state.selectedIndex !== -1) {
+      setQuery(history[state.selectedIndex]);
+    }
+  }, [history, state.selectedIndex]);
+
   return (
     <div
       onFocus={() => {
@@ -179,7 +185,7 @@ export function SearchBar(props) {
                   backgroundColor:
                     idx === state.selectedIndex ? "rgba(0,0,0, 0.25)" : "white",
                 }}
-                class="Search-Hist-Item"
+                key={idx}
               >
                 <button
                   onClick={() => {
@@ -189,14 +195,12 @@ export function SearchBar(props) {
                     setShowHistory(false);
                   }}
                   className="Search-Hist-Button"
-                  key={idx}
                   style={{ width: "100%" }}
                 >
                   {item}
                 </button>
                 <IconButton
                   type="button"
-                  class="Search-Hist-Del-Button"
                   onClick={delHistoryItem}
                   disableRipple={true}
                 >
