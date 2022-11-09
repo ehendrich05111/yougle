@@ -93,7 +93,9 @@ export function SearchBar(props) {
             {history.map((item, idx) => (
               <button
                 onClick={() => {
+                  setQuery(item);
                   props.onSubmit(item);
+                  // setShowHistory(false);
                 }}
                 className="Search-Hist-Item"
                 key={idx}
