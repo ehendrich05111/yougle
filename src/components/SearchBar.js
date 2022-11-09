@@ -3,6 +3,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { Card, Paper, InputBase, IconButton } from "@mui/material";
 import { API_BASE } from "../api/api";
 import { useAuth } from "../contexts/AuthContext";
+import { Clear } from "@mui/icons-material";
 
 const historyLength = 6;
 
@@ -33,6 +34,10 @@ export function SearchBar(props) {
       });
   };
 
+  const delHistoryItem = () => {
+    console.log("Deleted!");
+  };
+
   const submitQuery = () => {
     props.onSubmit(query);
   };
@@ -43,13 +48,14 @@ export function SearchBar(props) {
         setShowHistory(true);
       }}
       onMouseDown={(e) => {
+        console.log(e);
         getHistory();
-        if (e.target.className === "Search-Hist-Item") {
-          e.preventDefault();
-        } else if (
-          e.target.className ===
+        if (
+          e.target.className !==
           "MuiInputBase-input css-yz9k0d-MuiInputBase-input"
         ) {
+          e.preventDefault();
+        } else {
           setShowHistory(true);
         }
       }}
@@ -96,17 +102,31 @@ export function SearchBar(props) {
         >
           <div className="Search-Hist-List">
             {history.map((item, idx) => (
-              <button
-                onClick={() => {
-                  setQuery(item);
-                  props.onSubmit(item);
-                  setShowHistory(false);
-                }}
-                className="Search-Hist-Item"
-                key={idx}
+              <div
+                style={{ display: "flex", justifyContent: "space-between" }}
+                class="Search-Hist-Item"
               >
-                {item}
-              </button>
+                <button
+                  onClick={() => {
+                    setQuery(item);
+                    props.onSubmit(item);
+                    setShowHistory(false);
+                  }}
+                  className="Search-Hist-Button"
+                  key={idx}
+                  style={{ width: "100%" }}
+                >
+                  {item}
+                </button>
+                <IconButton
+                  type="button"
+                  class="Search-Hist-Del-Button"
+                  onClick={delHistoryItem}
+                  disableRipple={true}
+                >
+                  <Clear />
+                </IconButton>
+              </div>
             ))}
           </div>
         </Card>
