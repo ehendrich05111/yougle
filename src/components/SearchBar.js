@@ -98,10 +98,11 @@ export function SearchBar(props) {
   }, [arrowDownPressed]);
 
   useEffect(() => {
-    if (state.selectedIndex !== -1) {
+    // only update query if user is navigating through history
+    if (state.selectedIndex !== -1 && showHistory) {
       setQuery(history[state.selectedIndex]);
     }
-  }, [history, state.selectedIndex]);
+  }, [history, state.selectedIndex, showHistory]);
 
   return (
     <div
