@@ -34,6 +34,7 @@ export function SearchBar(props) {
       });
   };
 
+  // TODO: Complete this once backend for Story #31 is complete
   const delHistoryItem = () => {
     console.log("Deleted!");
   };
