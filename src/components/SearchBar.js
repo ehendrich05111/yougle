@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { Card, Paper, InputBase, IconButton } from "@mui/material";
 import { API_BASE } from "../api/api";
@@ -12,6 +12,59 @@ export function SearchBar(props) {
   const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState([]);
   const { token } = useAuth();
+
+  const initialState = { selectedIndex: -1 };
+
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case "arrowUp":
+        return {
+          selectedIndex:
+            state.selectedIndex !== 0
+              ? state.selectedIndex - 1
+              : history.length - 1,
+        };
+      case "arrowDown":
+        return {
+          selectedIndex:
+            state.selectedIndex !== history.length - 1
+              ? state.selectedIndex + 1
+              : 0,
+        };
+      case "select":
+        return { selectedIndex: action.payload };
+      default:
+        throw new Error();
+    }
+  };
+
+  const useKeyPress = (targetKey) => {
+    const [keyPressed, setKeyPressed] = useState(false);
+
+    useEffect(() => {
+      const downHandler = ({ key }) => {
+        if (key === targetKey) {
+          setKeyPressed(true);
+        }
+      };
+
+      const upHandler = ({ key }) => {
+        if (key === targetKey) {
+          setKeyPressed(false);
+        }
+      };
+
+      window.addEventListener("keydown", downHandler);
+      window.addEventListener("keyup", upHandler);
+
+      return () => {
+        window.removeEventListener("keydown", downHandler);
+        window.removeEventListener("keyup", upHandler);
+      };
+    }, [targetKey]);
+
+    return keyPressed;
+  };
 
   const getHistory = () => {
     fetch(`${API_BASE}/searchHistory/`, {
@@ -43,13 +96,29 @@ export function SearchBar(props) {
     props.onSubmit(query);
   };
 
+  // Handle keyboard navigation
+  const arrowUpPressed = useKeyPress("ArrowUp");
+  const arrowDownPressed = useKeyPress("ArrowDown");
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    if (arrowUpPressed) {
+      dispatch({ type: "arrowUp" });
+    }
+  }, [arrowUpPressed]);
+
+  useEffect(() => {
+    if (arrowDownPressed) {
+      dispatch({ type: "arrowDown" });
+    }
+  }, [arrowDownPressed]);
+
   return (
     <div
       onFocus={() => {
         setShowHistory(true);
       }}
       onMouseDown={(e) => {
-        console.log(e);
         getHistory();
         if (
           e.target.className !==
@@ -104,11 +173,17 @@ export function SearchBar(props) {
           <div className="Search-Hist-List">
             {history.map((item, idx) => (
               <div
-                style={{ display: "flex", justifyContent: "space-between" }}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  backgroundColor:
+                    idx === state.selectedIndex ? "rgba(0,0,0, 0.25)" : "white",
+                }}
                 class="Search-Hist-Item"
               >
                 <button
                   onClick={() => {
+                    dispatch({ type: "select", payload: idx });
                     setQuery(item);
                     props.onSubmit(item);
                     setShowHistory(false);
