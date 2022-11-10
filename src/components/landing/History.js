@@ -1,4 +1,5 @@
-import { Alert, Typography } from "@mui/material";
+import { Clear } from "@mui/icons-material";
+import { Alert, IconButton, Typography } from "@mui/material";
 import useSWR from "swr";
 import { fetcher } from "../../api/api";
 import { useAuth } from "../../contexts/AuthContext";
@@ -11,6 +12,11 @@ export default function History() {
   const errorMessage =
     data?.status !== "success" ? data?.message : error?.message;
 
+  // TODO: Complete this once backend for Story #31 is complete
+  const delHistoryItem = () => {
+    console.log("Deleted!");
+  };
+
   const history = data?.data?.history;
   return (
     <FullPageCard navbar loading={!data && !error}>
@@ -21,7 +27,16 @@ export default function History() {
       <ol className="history-box">
         {history?.map((item, idx) => (
           <li>
-            <div className="history-item">{item}</div>
+            <div className="history-item">
+              <div className="history-text">{item}</div>
+              <IconButton
+                type="button"
+                onClick={delHistoryItem}
+                style={{ borderRadius: "15px" }}
+              >
+                <Clear />
+              </IconButton>
+            </div>
           </li>
         ))}
       </ol>
