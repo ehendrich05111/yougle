@@ -191,6 +191,7 @@ export function SearchBar(props) {
                   {item}
                 </button>
                 <IconButton
+                  className="Search-Hist-Del-Button"
                   type="button"
                   onClick={delHistoryItem}
                   disableRipple={true}

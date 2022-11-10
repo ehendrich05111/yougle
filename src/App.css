@@ -79,11 +79,12 @@
   right: 0%;
   border: none;
   background: none;
-  color: rgba(0, 0, 0, 0.75);
+  /* color: rgba(0, 0, 0, 0.75); */
+  color: var(--yougle-red);
 }
 
 .Search-Hist-Del-Button:hover {
-  color: var(--yougle-blue);
+  color: var(--foreground-white);
 }
 
 .Search-Hist-Button {
@@ -93,16 +94,11 @@
   background: none;
   font-family: var(--global-font);
   font-size: 1em;
+  overflow: hidden;
 }
 
 .Search-Hist-Item:hover button {
-  /* color: var(--yougle-green); */
   background-color: rgba(0, 0, 0, 0.15);
-}
-
-.Search-Hist-Item:hover IconButton {
-  /* color: var(--yougle-green); */
-  background-color: none;
 }
 
 /* Sign Up */
