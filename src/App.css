@@ -72,7 +72,7 @@
 .Main-card {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .Row-box {
@@ -87,7 +87,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  row-gap: 2em;
+  row-gap: 1em;
 }
 
 .Pass-box {
