@@ -24,8 +24,8 @@ import { InsertLink, Star, StarBorderOutlined } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 
 const SERVICE_ICONS = {
-  slack: slack_icon,
-  teams: teams_icon,
+  Slack: slack_icon,
+  Teams: teams_icon,
 };
 
 function SearchResult({
@@ -180,8 +180,7 @@ export default function Search() {
       <div className="Main navbarpage">
         <img className="Yougle-logo" src={logo_full} alt="Yougle logo" />
         {searchBar}
-        <div className="Table-Results">
-        </div>
+        <div className="Table-Results"></div>
       </div>
     );
   }
