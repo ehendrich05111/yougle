@@ -20,7 +20,12 @@ import { useAuth } from "../../contexts/AuthContext";
 import useSWR from "swr";
 import slack_icon from "../../images/slack_icon.jpeg";
 import teams_icon from "../../images/teams_icon.png";
-import { InsertLink, Star, StarBorderOutlined } from "@mui/icons-material";
+import {
+  CopyAll,
+  InsertLink,
+  Star,
+  StarBorderOutlined,
+} from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 
 const SERVICE_ICONS = {
@@ -44,6 +49,7 @@ function SearchResult({
   const serviceName = SERVICE_NAMES[service];
   return (
     <Paper variant="outlined" sx={{ width: "fit-content", padding: 2 }}>
+      {console.log(service)}
       <Box
         sx={{
           display: "flex",
@@ -52,9 +58,6 @@ function SearchResult({
           alignItems: "center",
         }}
       >
-        <Typography variant="h6">
-          {teamName} #{channel}
-        </Typography>
         <Tooltip title={serviceName}>
           <IconButton>
             <img
@@ -64,6 +67,22 @@ function SearchResult({
             />
           </IconButton>
         </Tooltip>
+        <Typography variant="h6">
+          {teamName} #{channel}
+        </Typography>
+
+        <IconButton
+          variant="small"
+          onClick={() => {
+            const message = `From ${username} on ${date.toLocaleDateString()}:\n${text}`;
+            navigator.clipboard.writeText(message);
+            enqueueSnackbar("Message copied to clipboard", {
+              variant: "success",
+            });
+          }}
+        >
+          <CopyAll />
+        </IconButton>
         <IconButton variant="small" onClick={onSave}>
           {saved ? <Star /> : <StarBorderOutlined />}
         </IconButton>
