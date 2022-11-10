@@ -108,10 +108,11 @@ export default function Search() {
   const query = searchParams.get("q") || "";
 
   const fetchURL =
-    `${API_BASE}/search?` + new URLSearchParams({ 
+    `${API_BASE}/search?` +
+    new URLSearchParams({
       queryText: query,
       searchSlack: searchSlack,
-      searchTeams: searchTeams
+      searchTeams: searchTeams,
     });
 
   const { data, error } = useSWR(query ? [fetchURL, token] : null, fetcher, {
