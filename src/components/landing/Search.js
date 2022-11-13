@@ -20,12 +20,14 @@ import { useAuth } from "../../contexts/AuthContext";
 import useSWR from "swr";
 import slack_icon from "../../images/slack_icon.jpeg";
 import teams_icon from "../../images/teams_icon.png";
+import reddit_icon from "../../images/reddit_icon.png";
 import { InsertLink, Star, StarBorderOutlined } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 
 const SERVICE_ICONS = {
   slack: slack_icon,
   teams: teams_icon,
+  reddit: reddit_icon,
 };
 
 function SearchResult({
@@ -89,7 +91,9 @@ function SearchResult({
       <Typography variant="body1">
         {username}, {date.toLocaleDateString()}
       </Typography>
-      <Typography variant="body2">{text}</Typography>
+      <Typography variant="body2" style={{ whiteSpace: "pre-line" }}>
+        {text}
+      </Typography>
     </Paper>
   );
 }
@@ -180,8 +184,7 @@ export default function Search() {
       <div className="Main navbarpage">
         <img className="Yougle-logo" src={logo_full} alt="Yougle logo" />
         {searchBar}
-        <div className="Table-Results">
-        </div>
+        <div className="Table-Results"></div>
       </div>
     );
   }

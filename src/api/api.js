@@ -18,4 +18,5 @@ export const fetcher = (path, token) =>
 export const SERVICE_NAMES = {
   slack: "Slack",
   teams: "Microsoft Teams",
+  reddit: "Reddit",
 };
