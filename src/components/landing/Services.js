@@ -36,9 +36,27 @@ const teamsAuthorizeUrl =
   "&state=12345" +
   "&prompt=consent";
 
+const redditAuthorizeUrl =
+  "https://www.reddit.com/api/v1/authorize?" +
+  `client_id=${
+    process.env.NODE_ENV === "production"
+      ? "NE1iybrvzwrCDRbbLPKXRA"
+      : "iluIiVNUNhAK1GXaGg6IQQ"
+  }&` +
+  `response_type=code&` +
+  `state=hithere&` +
+  `redirect_uri=${
+    process.env.NODE_ENV === "production"
+      ? "https://yougle.herokuapp.com/reddit_callback"
+      : "https://yougle.local.gd:3000/reddit_callback"
+  }&` +
+  `duration=permanent&` +
+  `scope=privatemessages identity`;
+
 const serviceName = {
   slack: "Slack",
   teams: "Teams",
+  reddit: "Reddit",
 };
 
 export default function Services() {
@@ -165,6 +183,9 @@ export default function Services() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.3em" }}>
           <img alt="Microsoft Teams icon" src={teams_icon}></img>
           <a href={teamsAuthorizeUrl}>Add to Teams</a>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.3em" }}>
+          <a href={redditAuthorizeUrl}>Add to Reddit</a>
         </div>
       </div>
     </FullPageCard>
