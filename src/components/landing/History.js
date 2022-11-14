@@ -1,20 +1,40 @@
 import { Clear } from "@mui/icons-material";
 import { Alert, IconButton, Typography } from "@mui/material";
 import useSWR from "swr";
-import { fetcher } from "../../api/api";
+import { useSnackbar } from "notistack";
+import { API_BASE, fetcher } from "../../api/api";
 import { useAuth } from "../../contexts/AuthContext";
 import FullPageCard from "../FullPageCard";
 
 export default function History() {
   const { token } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
   const { data, error } = useSWR(["/searchHistory", token], fetcher);
 
   const errorMessage =
     data?.status !== "success" ? data?.message : error?.message;
 
-  // TODO: Complete this once backend for Story #31 is complete
-  const delHistoryItem = () => {
-    console.log("Deleted!");
+  const delHistoryItem = (idx) => {
+    fetch(`${API_BASE}/searchHistory/deleteSingle`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      body: JSON.stringify({ index: idx }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.status !== "success") {
+          throw new Error(res.message);
+        }
+        enqueueSnackbar("Deleted", { variant: "success" });
+      })
+      .catch((err) => {
+        enqueueSnackbar(`Error deleting search: ${err.message}`, {
+          variant: "error",
+        });
+      });
   };
 
   const history = data?.data?.history;
@@ -31,7 +51,9 @@ export default function History() {
               <div className="history-text">{item}</div>
               <IconButton
                 type="button"
-                onClick={delHistoryItem}
+                onClick={() => {
+                  delHistoryItem(idx);
+                }}
                 style={{ borderRadius: "15px" }}
               >
                 <Clear />
