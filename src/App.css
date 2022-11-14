@@ -67,6 +67,79 @@
   border-radius: 50%;
 }
 
+.Search-items {
+  display: grid;
+  row-gap: 2em;
+  column-gap: 2em;
+}
+
+@media (min-width: 800px) {
+  .Search-items { 
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .Search-items { 
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1600px) {
+  .Search-items { 
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.Search-item .Chat-title > #team-name {
+  font-size: 1.25em;
+  color: black;
+}
+
+.Search-item .Chat-title > #channel-name {
+  font-size: 0.85em;
+  color: gray;
+}
+
+.Search-item .Click-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.Click-buttons > #Copy-button:hover {
+  color: var(--yougle-blue);
+}
+
+.Click-buttons #Star-button:hover {
+  color: var(--yougle-yellow);
+}
+
+.Click-buttons #Link-button:hover {
+  color: var(--yougle-red);
+}
+
+.Click-buttons #Open-button:hover {
+  color: var(--yougle-green);
+}
+
+.Search-item .Service-img {
+  object-fit: contain;
+  padding: 10px;
+  border-radius: 1em;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  width: 1.75em;
+}
+
+.Search-item > .Search-text {
+  display: -webkit-box;
+  word-wrap: break-word;
+  overflow: hidden;
+  margin: 0.5em;
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+}
+
 /* Sign Up */
 
 .Main-card {

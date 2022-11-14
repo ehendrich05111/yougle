@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { SearchBar } from "../SearchBar";
 import logo_full from "../../images/logo_full.png";
 import { useSearchParams } from "react-router-dom";
@@ -18,19 +18,22 @@ import {
 import { API_BASE, fetcher, SERVICE_NAMES } from "../../api/api";
 import { useAuth } from "../../contexts/AuthContext";
 import useSWR from "swr";
-import slack_icon from "../../images/slack_icon.jpeg";
+import slack_icon from "../../images/slack_icon.jpg";
 import teams_icon from "../../images/teams_icon.png";
 import {
   CopyAll,
+  ExpandLess,
+  ExpandMore,
   InsertLink,
+  OpenInNew,
   Star,
   StarBorderOutlined,
 } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 
 const SERVICE_ICONS = {
-  Slack: slack_icon,
-  Teams: teams_icon,
+  slack: slack_icon,
+  teams: teams_icon,
 };
 
 function SearchResult({
@@ -48,7 +51,16 @@ function SearchResult({
   const date = new Date(timestamp * 1000);
   const serviceName = SERVICE_NAMES[service];
   return (
-    <Paper variant="outlined" sx={{ width: "fit-content", padding: 2 }}>
+    <Paper
+      variant="outlined"
+      sx={{
+        minWidth: "18em",
+        height: "16em",
+        borderRadius: "15px",
+        padding: 2,
+      }}
+      className="Search-item"
+    >
       {console.log(service)}
       <Box
         sx={{
@@ -56,59 +68,76 @@ function SearchResult({
           flexDirection: "row",
           gap: 2,
           alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
-        <Tooltip title={serviceName}>
-          <IconButton>
-            <img
-              src={SERVICE_ICONS[service]}
-              alt={`${serviceName} logo`}
-              style={{ objectFit: "contain" }}
-            />
-          </IconButton>
-        </Tooltip>
-        <Typography variant="h6">
-          {teamName} #{channel}
-        </Typography>
-
-        <IconButton
-          variant="small"
-          onClick={() => {
-            const message = `From ${username} on ${date.toLocaleDateString()}:\n${text}`;
-            navigator.clipboard.writeText(message);
-            enqueueSnackbar("Message copied to clipboard", {
-              variant: "success",
-            });
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
           }}
         >
-          <CopyAll />
-        </IconButton>
-        <IconButton variant="small" onClick={onSave}>
-          {saved ? <Star /> : <StarBorderOutlined />}
-        </IconButton>
-      </Box>
-      {permalink ? (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Link href={permalink} target="_blank" rel="noopener noreferrer">
-            View in {serviceName}
-          </Link>
+          <Tooltip title={serviceName}>
+            <IconButton>
+              <img
+                src={SERVICE_ICONS[service]}
+                alt={`${serviceName} logo`}
+                className="Service-img"
+              />
+            </IconButton>
+          </Tooltip>
+          <Typography variant="h6" className="Chat-title">
+            <div id="team-name">{teamName}</div>
+            <div id="channel-name"> #{channel}</div>
+          </Typography>
+        </div>
+        <div className="Click-buttons">
           <IconButton
+            id="Copy-button"
             variant="small"
             onClick={() => {
-              navigator.clipboard.writeText(permalink);
-              enqueueSnackbar("Link copied to clipboard", {
+              const message = `From ${username} on ${date.toLocaleDateString()}:\n${text}`;
+              navigator.clipboard.writeText(message);
+              enqueueSnackbar("Message copied to clipboard", {
                 variant: "success",
               });
             }}
           >
-            <InsertLink />
+            <CopyAll />
           </IconButton>
-        </Box>
-      ) : null}
-      <Typography variant="body1">
-        {username}, {date.toLocaleDateString()}
-      </Typography>
-      <Typography variant="body2">{text}</Typography>
+          <IconButton variant="small" onClick={onSave} id="Star-button">
+            {saved ? <Star /> : <StarBorderOutlined color="yellow" />}
+          </IconButton>
+          {permalink ? (
+            <IconButton
+              id="Link-button"
+              variant="small"
+              onClick={() => {
+                navigator.clipboard.writeText(permalink);
+                enqueueSnackbar("Link copied to clipboard", {
+                  variant: "success",
+                });
+              }}
+            >
+              <InsertLink />
+            </IconButton>
+          ) : null}
+          {permalink && (
+            <a href={permalink} target="_blank">
+              <IconButton id="Open-button" variant="small">
+                <OpenInNew />
+              </IconButton>
+            </a>
+          )}
+        </div>
+      </Box>
+
+      <div className="Search-text">
+        <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+          {username}, {date.toLocaleDateString()}:
+        </Typography>
+        <Typography variant="body2">{text}</Typography>
+      </div>
     </Paper>
   );
 }
@@ -236,25 +265,27 @@ export default function Search() {
             </FormGroup>
           </Box>
         }
-        {messages.map((result) => (
-          <SearchResult
-            key={result.id}
-            {...result}
-            onSave={() =>
-              onSave({
-                id: result.id,
-                service: result.service,
-                result: result.text,
-                date: result.date,
-                reference: result.permalink,
-              })
-            }
-            saved={savedMessageData?.data?.some(
-              (savedMessage) => savedMessage.id === result.id
-            )}
-            service={result.service}
-          />
-        ))}
+        <div className="Search-items">
+          {messages.map((result) => (
+            <SearchResult
+              key={result.id}
+              {...result}
+              onSave={() =>
+                onSave({
+                  id: result.id,
+                  service: result.service,
+                  result: result.text,
+                  date: result.date,
+                  reference: result.permalink,
+                })
+              }
+              saved={savedMessageData?.data?.some(
+                (savedMessage) => savedMessage.id === result.id
+              )}
+              service={result.service}
+            />
+          ))}
+        </div>
       </>
     );
   }
