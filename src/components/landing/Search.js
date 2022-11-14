@@ -99,10 +99,16 @@ export default function Search() {
   const { enqueueSnackbar } = useSnackbar();
   const [searchParams, setSearchParams] = useSearchParams();
   const [sortByDate, setSortByDate] = React.useState(false);
+  const [searchSlack, setSearchSlack] = React.useState(true);
+  const [searchTeams, setSearchTeams] = React.useState(true);
   const query = searchParams.get("q") || "";
 
   const fetchURL =
-    `${API_BASE}/search?` + new URLSearchParams({ queryText: query });
+    `${API_BASE}/search?` + new URLSearchParams({ 
+      queryText: query,
+      searchSlack: searchSlack,
+      searchTeams: searchTeams
+    });
 
   const { data, error } = useSWR(query ? [fetchURL, token] : null, fetcher, {
     revalidateOnFocus: false,
@@ -204,7 +210,7 @@ export default function Search() {
               Found {messages.length} results in {data.data.searchTime / 1000}{" "}
               seconds
             </Typography>
-            <FormGroup sx={{ margin: 0 }}>
+            <FormGroup row={true} sx={{ margin: 0 }}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -213,6 +219,26 @@ export default function Search() {
                   />
                 }
                 label="Sort by date?"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    defaultChecked={searchSlack}
+                    value={searchSlack}
+                    onChange={(event) => setSearchSlack(event.target.checked)}
+                  />
+                }
+                label="Search Slack"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    defaultChecked={searchTeams}
+                    value={searchTeams}
+                    onChange={(event) => setSearchTeams(event.target.checked)}
+                  />
+                }
+                label="Search Microsoft Teams"
               />
             </FormGroup>
           </Box>
