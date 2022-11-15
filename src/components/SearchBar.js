@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useReducer, useMemo } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { Card, Paper, InputBase, IconButton } from "@mui/material";
-import { fetcher } from "../api/api";
+import { API_BASE, fetcher } from "../api/api";
 import { useAuth } from "../contexts/AuthContext";
 import { Clear } from "@mui/icons-material";
 import useSWR from "swr";
+import { useSnackbar } from "notistack";
 
 const historyLength = 6;
 
 export function SearchBar(props) {
   const { token } = useAuth();
-  const { data } = useSWR(["/searchHistory", token], fetcher);
+  const { enqueueSnackbar } = useSnackbar();
+  const { data, mutate } = useSWR(["/searchHistory", token], fetcher);
   const [query, setQuery] = useState(props.query || "");
   const [showHistory, setShowHistory] = useState(false);
 
@@ -71,9 +73,28 @@ export function SearchBar(props) {
     return keyPressed;
   };
 
-  // TODO: Complete this once backend for Story #31 is complete
-  const delHistoryItem = () => {
-    console.log("Deleted!");
+  const delHistoryItem = (idx) => {
+    fetch(`${API_BASE}/searchHistory/deleteSingle`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      body: JSON.stringify({ index: idx }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.status !== "success") {
+          throw new Error(res.message);
+        }
+        enqueueSnackbar("Deleted", { variant: "success" });
+        mutate({ ...data.data.history });
+      })
+      .catch((err) => {
+        enqueueSnackbar(`Error deleting search: ${err.message}`, {
+          variant: "error",
+        });
+      });
   };
 
   const submitQuery = () => {
@@ -191,12 +212,13 @@ export function SearchBar(props) {
                   {item}
                 </button>
                 <IconButton
-                  className="Search-Hist-Del-Button"
                   type="button"
-                  onClick={delHistoryItem}
+                  onClick={() => {
+                    delHistoryItem(idx);
+                  }}
                   disableRipple={true}
                 >
-                  <Clear />
+                  <Clear className="Search-Hist-Del-Button" />
                 </IconButton>
               </div>
             ))}
