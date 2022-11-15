@@ -111,7 +111,7 @@ const SimpleDialog = (props) => {
           }}
           onClick={handleCancel}
         >
-          My Bad
+          Cancel
         </Button>
       </Box>
     </Dialog>
