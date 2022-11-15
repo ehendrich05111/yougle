@@ -15,6 +15,7 @@ export function SearchBar(props) {
   const { data, mutate } = useSWR(["/searchHistory", token], fetcher);
   const [query, setQuery] = useState(props.query || "");
   const [showHistory, setShowHistory] = useState(false);
+  const searchBarRef = React.useRef(null);
 
   const initialState = { selectedIndex: -1 };
 
@@ -130,10 +131,7 @@ export function SearchBar(props) {
         setShowHistory(true);
       }}
       onMouseDown={(e) => {
-        if (
-          e.target.className !==
-          "MuiInputBase-input css-yz9k0d-MuiInputBase-input"
-        ) {
+        if (e.target === searchBarRef.current) {
           e.preventDefault();
         } else {
           setShowHistory(true);
@@ -160,6 +158,7 @@ export function SearchBar(props) {
           value={query || ""}
           inputProps={{ "aria-label": "search your chats..." }}
           onChange={(event) => setQuery(event.target.value)}
+          ref={searchBarRef}
         />
         <IconButton
           type="button"
