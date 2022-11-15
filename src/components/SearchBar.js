@@ -87,7 +87,6 @@ export function SearchBar(props) {
         if (res.status !== "success") {
           throw new Error(res.message);
         }
-        enqueueSnackbar("Deleted", { variant: "success" });
         mutate({ ...data.data.history });
       })
       .catch((err) => {
@@ -214,7 +213,7 @@ export function SearchBar(props) {
                 <IconButton
                   type="button"
                   onClick={() => {
-                    delHistoryItem(idx);
+                    delHistoryItem(history.length - idx - 1);
                   }}
                   disableRipple={true}
                 >
