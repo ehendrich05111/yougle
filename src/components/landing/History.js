@@ -9,7 +9,7 @@ import FullPageCard from "../FullPageCard";
 export default function History() {
   const { token } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
-  const { data, error } = useSWR(["/searchHistory", token], fetcher);
+  const { data, error, mutate } = useSWR(["/searchHistory", token], fetcher);
 
   const errorMessage =
     data?.status !== "success" ? data?.message : error?.message;
@@ -29,6 +29,7 @@ export default function History() {
           throw new Error(res.message);
         }
         enqueueSnackbar("Deleted", { variant: "success" });
+        mutate({ ...data.data.history });
       })
       .catch((err) => {
         enqueueSnackbar(`Error deleting search: ${err.message}`, {
