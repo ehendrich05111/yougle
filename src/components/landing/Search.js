@@ -18,10 +18,16 @@ import {
 import { API_BASE, fetcher, SERVICE_NAMES } from "../../api/api";
 import { useAuth } from "../../contexts/AuthContext";
 import useSWR from "swr";
-import slack_icon from "../../images/slack_icon.jpeg";
+import slack_icon from "../../images/slack_icon.jpg";
 import teams_icon from "../../images/teams_icon.png";
 import reddit_icon from "../../images/reddit_icon.png";
-import { InsertLink, Star, StarBorderOutlined } from "@mui/icons-material";
+import {
+  CopyAll,
+  InsertLink,
+  OpenInNew,
+  Star,
+  StarBorderOutlined,
+} from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 
 const SERVICE_ICONS = {
@@ -45,37 +51,65 @@ function SearchResult({
   const date = new Date(timestamp * 1000);
   const serviceName = SERVICE_NAMES[service];
   return (
-    <Paper variant="outlined" sx={{ width: "fit-content", padding: 2 }}>
+    <Paper
+      variant="outlined"
+      sx={{
+        minWidth: "18em",
+        height: "16em",
+        borderRadius: "15px",
+        padding: 2,
+      }}
+      className="Search-item"
+    >
+      {console.log(service)}
       <Box
         sx={{
           display: "flex",
           flexDirection: "row",
           gap: 2,
           alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
-        <Typography variant="h6">
-          {teamName} #{channel}
-        </Typography>
-        <Tooltip title={serviceName}>
-          <IconButton>
-            <img
-              src={SERVICE_ICONS[service]}
-              alt={`${serviceName} logo`}
-              style={{ objectFit: "contain" }}
-            />
-          </IconButton>
-        </Tooltip>
-        <IconButton variant="small" onClick={onSave}>
-          {saved ? <Star /> : <StarBorderOutlined />}
-        </IconButton>
-      </Box>
-      {permalink ? (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Link href={permalink} target="_blank" rel="noopener noreferrer">
-            View in {serviceName}
-          </Link>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <Tooltip title={serviceName}>
+            <IconButton disableRipple>
+              <img
+                src={SERVICE_ICONS[service]}
+                alt={`${serviceName} logo`}
+                className="Service-img"
+              />
+            </IconButton>
+          </Tooltip>
+          <Typography variant="h6" className="Chat-title">
+            <div id="team-name">{teamName}</div>
+            <div id="channel-name"> #{channel}</div>
+          </Typography>
+        </div>
+        <div className="Click-buttons">
           <IconButton
+            id="Copy-button"
+            variant="small"
+            onClick={() => {
+              const message = `From ${username} on ${date.toLocaleDateString()}:\n${text}`;
+              navigator.clipboard.writeText(message);
+              enqueueSnackbar("Message copied to clipboard", {
+                variant: "success",
+              });
+            }}
+          >
+            <CopyAll />
+          </IconButton>
+          <IconButton variant="small" onClick={onSave} id="Star-button">
+            {saved ? <Star /> : <StarBorderOutlined color="yellow" />}
+          </IconButton>
+          <IconButton
+            id="Link-button"
             variant="small"
             onClick={() => {
               navigator.clipboard.writeText(permalink);
@@ -86,14 +120,22 @@ function SearchResult({
           >
             <InsertLink />
           </IconButton>
-        </Box>
-      ) : null}
-      <Typography variant="body1">
-        {username}, {date.toLocaleDateString()}
-      </Typography>
-      <Typography variant="body2" style={{ whiteSpace: "pre-line" }}>
-        {text}
-      </Typography>
+          {permalink ? (
+            <Link href={permalink} target="_blank" rel="noopener noreferrer">
+              <IconButton id="Open-button" variant="small">
+                <OpenInNew />
+              </IconButton>
+            </Link>
+          ) : null}
+        </div>
+      </Box>
+
+      <div className="Search-text">
+        <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+          {username}, {date.toLocaleDateString()}:
+        </Typography>
+        <Typography variant="body2">{text}</Typography>
+      </div>
     </Paper>
   );
 }
@@ -108,10 +150,11 @@ export default function Search() {
   const query = searchParams.get("q") || "";
 
   const fetchURL =
-    `${API_BASE}/search?` + new URLSearchParams({ 
+    `${API_BASE}/search?` +
+    new URLSearchParams({
       queryText: query,
       searchSlack: searchSlack,
-      searchTeams: searchTeams
+      searchTeams: searchTeams,
     });
 
   const { data, error } = useSWR(query ? [fetchURL, token] : null, fetcher, {
@@ -247,25 +290,27 @@ export default function Search() {
             </FormGroup>
           </Box>
         }
-        {messages.map((result) => (
-          <SearchResult
-            key={result.id}
-            {...result}
-            onSave={() =>
-              onSave({
-                id: result.id,
-                service: result.service,
-                result: result.text,
-                date: result.timestamp,
-                reference: result.permalink,
-              })
-            }
-            saved={savedMessageData?.data?.some(
-              (savedMessage) => savedMessage.id === result.id
-            )}
-            service={result.service}
-          />
-        ))}
+        <div className="Search-items">
+          {messages.map((result) => (
+            <SearchResult
+              key={result.id}
+              {...result}
+              onSave={() =>
+                onSave({
+                  id: result.id,
+                  service: result.service,
+                  result: result.text,
+                  date: result.timestamp,
+                  reference: result.permalink,
+                })
+              }
+              saved={savedMessageData?.data?.some(
+                (savedMessage) => savedMessage.id === result.id
+              )}
+              service={result.service}
+            />
+          ))}
+        </div>
       </>
     );
   }
