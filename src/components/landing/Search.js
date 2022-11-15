@@ -78,7 +78,7 @@ function SearchResult({
           }}
         >
           <Tooltip title={serviceName}>
-            <IconButton>
+            <IconButton disableRipple>
               <img
                 src={SERVICE_ICONS[service]}
                 alt={`${serviceName} logo`}
