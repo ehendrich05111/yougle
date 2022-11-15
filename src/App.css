@@ -68,23 +68,21 @@
 
 .Search-Hist-List {
   width: calc(60vw + 0.5em);
-  /* margin: 1.25em; */
   display: flex;
   flex-direction: column;
 }
 
 .Search-Hist-Del-Button {
-  /* position: absolute; */
   justify-self: center;
-  right: 0%;
-  border: none;
   background: none;
-  /* color: rgba(0, 0, 0, 0.75); */
-  color: var(--yougle-red);
+  padding: 0.25em;
+  border-radius: 50%;
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .Search-Hist-Del-Button:hover {
   color: var(--foreground-white);
+  background-color: rgba(0, 0, 0, 0.15);
 }
 
 .Search-Hist-Button {

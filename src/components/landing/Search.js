@@ -18,7 +18,7 @@ import {
 import { API_BASE, fetcher, SERVICE_NAMES } from "../../api/api";
 import { useAuth } from "../../contexts/AuthContext";
 import useSWR, { useSWRConfig } from "swr";
-import slack_icon from "../../images/slack_icon.jpeg";
+import slack_icon from "../../images/slack_icon.jpg";
 import teams_icon from "../../images/teams_icon.png";
 import reddit_icon from "../../images/reddit_icon.png";
 import {
