@@ -75,7 +75,7 @@ export default function Join() {
 
   // Rendered element
   return (
-    <FullPageCard loading={loading}>
+    <FullPageCard loading={loading} style={{ maxWidth: 500 }}>
       <div className="Main-card">
         <img
           src={logo_full}

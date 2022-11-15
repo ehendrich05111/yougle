@@ -13,7 +13,12 @@ import {
   Typography,
 } from "@mui/material";
 import useSWR from "swr";
-import { API_BASE, fetcher, SLACK_REDIRECT_URL } from "../../api/api";
+import {
+  API_BASE,
+  fetcher,
+  SLACK_REDIRECT_URL,
+  TEAMS_REDIRECT_URL,
+} from "../../api/api";
 import FullPageCard from "../FullPageCard";
 import { Delete } from "@mui/icons-material";
 import { useAuth } from "../../contexts/AuthContext";
@@ -24,16 +29,34 @@ const teamsAuthorizeUrl =
   "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?" +
   "client_id=12718039-8a0c-40d3-bdb4-00fef0b4a2ca" +
   "&response_type=code" +
-  "&redirect_uri=https%3A%2F%2Fyougle.local.gd%3A3000%2Fteams_callback" +
+  `&redirect_uri=${TEAMS_REDIRECT_URL}` +
   "&response_mode=query" +
   // "&scope=User.Read%20Chat.Read%20Chat.ReadWrite%20ChannelMessage.Read.All%20offline_access" +
   "&scope=User.Read%20Chat.Read%20Chat.ReadWrite%20offline_access" +
   "&state=12345" +
   "&prompt=consent";
 
+const redditAuthorizeUrl =
+  "https://www.reddit.com/api/v1/authorize?" +
+  `client_id=${
+    process.env.NODE_ENV === "production"
+      ? "NE1iybrvzwrCDRbbLPKXRA"
+      : "iluIiVNUNhAK1GXaGg6IQQ"
+  }&` +
+  `response_type=code&` +
+  `state=hithere&` +
+  `redirect_uri=${
+    process.env.NODE_ENV === "production"
+      ? "https://yougle.herokuapp.com/reddit_callback"
+      : "https://yougle.local.gd:3000/reddit_callback"
+  }&` +
+  `duration=permanent&` +
+  `scope=privatemessages identity`;
+
 const serviceName = {
   slack: "Slack",
-  teams: "Teams"
+  teams: "Teams",
+  reddit: "Reddit",
 };
 
 export default function Services() {
@@ -138,7 +161,14 @@ export default function Services() {
           ))}
         </TableBody>
       </Table>
-      <div style={{ alignSelf: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <div
+        style={{
+          alignSelf: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
         <a
           href={`https://slack.com/oauth/v2/authorize?client_id=4150752765812.4141695798086&scope=&user_scope=search:read&redirect_uri=${SLACK_REDIRECT_URL}`}
         >
@@ -150,10 +180,12 @@ export default function Services() {
             srcSet="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"
           />
         </a>
-        <div style={{display: "flex", alignItems: "center", gap: "0.3em"}}>
-            <img alt="Microsoft Teams icon" src={teams_icon}>
-            </img>
-        <a href={teamsAuthorizeUrl}>Add to Teams</a>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.3em" }}>
+          <img alt="Microsoft Teams icon" src={teams_icon}></img>
+          <a href={teamsAuthorizeUrl}>Add to Teams</a>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.3em" }}>
+          <a href={redditAuthorizeUrl}>Add to Reddit</a>
         </div>
       </div>
     </FullPageCard>

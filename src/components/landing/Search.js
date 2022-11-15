@@ -20,12 +20,14 @@ import { useAuth } from "../../contexts/AuthContext";
 import useSWR from "swr";
 import slack_icon from "../../images/slack_icon.jpeg";
 import teams_icon from "../../images/teams_icon.png";
+import reddit_icon from "../../images/reddit_icon.png";
 import { InsertLink, Star, StarBorderOutlined } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 
 const SERVICE_ICONS = {
   slack: slack_icon,
   teams: teams_icon,
+  reddit: reddit_icon,
 };
 
 function SearchResult({
@@ -89,7 +91,9 @@ function SearchResult({
       <Typography variant="body1">
         {username}, {date.toLocaleDateString()}
       </Typography>
-      <Typography variant="body2">{text}</Typography>
+      <Typography variant="body2" style={{ whiteSpace: "pre-line" }}>
+        {text}
+      </Typography>
     </Paper>
   );
 }
@@ -99,10 +103,16 @@ export default function Search() {
   const { enqueueSnackbar } = useSnackbar();
   const [searchParams, setSearchParams] = useSearchParams();
   const [sortByDate, setSortByDate] = React.useState(false);
+  const [searchSlack, setSearchSlack] = React.useState(true);
+  const [searchTeams, setSearchTeams] = React.useState(true);
   const query = searchParams.get("q") || "";
 
   const fetchURL =
-    `${API_BASE}/search?` + new URLSearchParams({ queryText: query });
+    `${API_BASE}/search?` + new URLSearchParams({ 
+      queryText: query,
+      searchSlack: searchSlack,
+      searchTeams: searchTeams
+    });
 
   const { data, error } = useSWR(query ? [fetchURL, token] : null, fetcher, {
     revalidateOnFocus: false,
@@ -180,8 +190,7 @@ export default function Search() {
       <div className="Main navbarpage">
         <img className="Yougle-logo" src={logo_full} alt="Yougle logo" />
         {searchBar}
-        <div className="Table-Results">
-        </div>
+        <div className="Table-Results"></div>
       </div>
     );
   }
@@ -205,7 +214,7 @@ export default function Search() {
               Found {messages.length} results in {data.data.searchTime / 1000}{" "}
               seconds
             </Typography>
-            <FormGroup sx={{ margin: 0 }}>
+            <FormGroup row={true} sx={{ margin: 0 }}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -214,6 +223,26 @@ export default function Search() {
                   />
                 }
                 label="Sort by date?"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    defaultChecked={searchSlack}
+                    value={searchSlack}
+                    onChange={(event) => setSearchSlack(event.target.checked)}
+                  />
+                }
+                label="Search Slack"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    defaultChecked={searchTeams}
+                    value={searchTeams}
+                    onChange={(event) => setSearchTeams(event.target.checked)}
+                  />
+                }
+                label="Search Microsoft Teams"
               />
             </FormGroup>
           </Box>
@@ -227,7 +256,7 @@ export default function Search() {
                 id: result.id,
                 service: result.service,
                 result: result.text,
-                date: result.date,
+                date: result.timestamp,
                 reference: result.permalink,
               })
             }
