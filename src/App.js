@@ -108,6 +108,10 @@ export default function App() {
           path="/teams_callback"
           element={<OAuthCallback serviceName="teams" />}
         ></Route>
+        <Route
+          path="/reddit_callback"
+          element={<OAuthCallback serviceName="reddit" />}
+        ></Route>
         <Route path="/signup" element={<Join />}></Route>
         <Route path="/" element={<Navigate to="/search" />}></Route>
         {Object.values(MainPages).map((path) => (

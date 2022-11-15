@@ -11,7 +11,7 @@ import {
   Slide,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import useSWR from "swr";
 import { API_BASE, fetcher } from "../api/api";
 import { useAuth } from "../contexts/AuthContext";
@@ -148,6 +148,28 @@ export default function Profile() {
   const { data, error, mutate } = useSWR(["/profile", token], fetcher);
   const navigate = useNavigate();
 
+  const handleDelete = useCallback(
+    (canceled) => {
+      if (!canceled && isDelete) {
+        fetch(`${API_BASE}/deleteAccount/profile`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json", Authorization: token },
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            if (res.status !== "error") {
+              mutate();
+              navigate("/login");
+            }
+          });
+      } else {
+        setIsSure(!isSure);
+      }
+      setIsDelete(!isDelete);
+    },
+    [isDelete, isSure, mutate, navigate, token]
+  );
+
   React.useEffect(() => {
     setFirstName(data?.data?.firstName || "");
     setLastName(data?.data?.lastName || "");
@@ -168,7 +190,7 @@ export default function Profile() {
     return () => {
       clearInterval(timer);
     };
-  }, [data, isSure]);
+  }, [data, isSure, handleDelete]);
 
   if (error) {
     enqueueSnackbar(error.message, { variant: "error" });
@@ -178,25 +200,6 @@ export default function Profile() {
     return <LinearProgress />;
   }
   const oldEmail = data.data.email;
-
-  const handleDelete = (canceled) => {
-    if (!canceled && isDelete) {
-      fetch(`${API_BASE}/deleteAccount/profile`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json", Authorization: token },
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          if (res.status !== "error") {
-            mutate();
-            navigate("/login");
-          }
-        });
-    } else {
-      setIsSure(!isSure);
-    }
-    setIsDelete(!isDelete);
-  };
 
   const handleMainEdit = () => {
     if (isEditing) {

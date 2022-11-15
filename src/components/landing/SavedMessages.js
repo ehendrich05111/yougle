@@ -47,7 +47,9 @@ export default function SavedMessages() {
       </Typography>
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
       {data && data?.data?.length === 0 ? (
-        <Typography variant="body1">You have no saved messages.</Typography>
+        <Typography variant="body1" style={{ textAlign: "center" }}>
+          You have no saved messages.
+        </Typography>
       ) : null}
       {data?.data?.map((message) => (
         <Card key={message._id} variant="outlined">

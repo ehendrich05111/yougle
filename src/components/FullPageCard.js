@@ -1,6 +1,6 @@
 import { Card, LinearProgress } from "@mui/material";
 
-export default function FullPageCard({ loading, navbar, children }) {
+export default function FullPageCard({ loading, navbar, children, style }) {
   // don't go above a certain height: https://stackoverflow.com/a/19976062
   return (
     <div
@@ -37,6 +37,7 @@ export default function FullPageCard({ loading, navbar, children }) {
               maxWidth: 400,
               maxHeight: 725,
               boxSizing: "border-box",
+              ...style,
             }}
           >
             <LinearProgress
