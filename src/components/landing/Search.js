@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { SearchBar } from "../SearchBar";
 import logo_full from "../../images/logo_full.png";
 import { useSearchParams } from "react-router-dom";
@@ -23,8 +23,6 @@ import teams_icon from "../../images/teams_icon.png";
 import reddit_icon from "../../images/reddit_icon.png";
 import {
   CopyAll,
-  ExpandLess,
-  ExpandMore,
   InsertLink,
   OpenInNew,
   Star,
@@ -110,27 +108,25 @@ function SearchResult({
           <IconButton variant="small" onClick={onSave} id="Star-button">
             {saved ? <Star /> : <StarBorderOutlined color="yellow" />}
           </IconButton>
+          <IconButton
+            id="Link-button"
+            variant="small"
+            onClick={() => {
+              navigator.clipboard.writeText(permalink);
+              enqueueSnackbar("Link copied to clipboard", {
+                variant: "success",
+              });
+            }}
+          >
+            <InsertLink />
+          </IconButton>
           {permalink ? (
-            <IconButton
-              id="Link-button"
-              variant="small"
-              onClick={() => {
-                navigator.clipboard.writeText(permalink);
-                enqueueSnackbar("Link copied to clipboard", {
-                  variant: "success",
-                });
-              }}
-            >
-              <InsertLink />
-            </IconButton>
-          ) : null}
-          {permalink && (
-            <a href={permalink} target="_blank">
+            <Link href={permalink} target="_blank" rel="noopener noreferrer">
               <IconButton id="Open-button" variant="small">
                 <OpenInNew />
               </IconButton>
-            </a>
-          )}
+            </Link>
+          ) : null}
         </div>
       </Box>
 
@@ -304,7 +300,7 @@ export default function Search() {
                   id: result.id,
                   service: result.service,
                   result: result.text,
-                  date: result.date,
+                  date: result.timestamp,
                   reference: result.permalink,
                 })
               }
