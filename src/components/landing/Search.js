@@ -3,6 +3,9 @@ import { SearchBar } from "../SearchBar";
 import logo_full from "../../images/logo_full.png";
 import { useSearchParams } from "react-router-dom";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Alert,
   Box,
   Checkbox,
@@ -23,6 +26,7 @@ import teams_icon from "../../images/teams_icon.png";
 import reddit_icon from "../../images/reddit_icon.png";
 import {
   CopyAll,
+  ExpandMore,
   InsertLink,
   OpenInNew,
   Star,
@@ -61,7 +65,6 @@ function SearchResult({
       }}
       className="Search-item"
     >
-      {console.log(service)}
       <Box
         sx={{
           display: "flex",
@@ -140,6 +143,80 @@ function SearchResult({
   );
 }
 
+function getSearchKey(query, service, token, shouldFetch) {
+  return shouldFetch
+    ? [
+        `${API_BASE}/search/${service}?` +
+          new URLSearchParams({
+            queryText: query,
+          }),
+        token,
+      ]
+    : null;
+}
+
+function SearchResultAccordion(props) {
+  const { service, data, error, onSave, savedMessages, disabled, sortByDate } =
+    props;
+
+  const messages = [...(data?.data?.messages || [])];
+  if (messages && sortByDate) {
+    messages.sort((a, b) => b.timestamp - a.timestamp);
+  }
+
+  var content = null;
+  if (disabled) {
+    content = <Alert severity="info">Service disabled.</Alert>;
+  } else if (!data && !error) {
+    content = <LinearProgress />;
+  } else if (error || data?.status !== "success") {
+    content = <Alert severity="error">{error?.message || data?.message}</Alert>;
+  } else {
+    content = (
+      <>
+        {
+          <Box sx={{ display: "flex", gap: 5, alignItems: "center" }}>
+            <Typography>
+              Found {messages.length} results in {data.data.searchTime / 1000}{" "}
+              seconds
+            </Typography>
+          </Box>
+        }
+        <div className="Search-items">
+          {messages.map((result) => (
+            <SearchResult
+              key={result.id}
+              {...result}
+              onSave={() =>
+                onSave({
+                  id: result.id,
+                  service: result.service,
+                  result: result.text,
+                  date: result.timestamp,
+                  reference: result.permalink,
+                })
+              }
+              saved={savedMessages.some(
+                (savedMessage) => savedMessage.id === result.id
+              )}
+              service={result.service}
+            />
+          ))}
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <Accordion variant="outlined" defaultExpanded disableGutters>
+      <AccordionSummary expandIcon={<ExpandMore />}>
+        <Typography variant="h6">{SERVICE_NAMES[service]}</Typography>
+      </AccordionSummary>
+      <AccordionDetails>{content}</AccordionDetails>
+    </Accordion>
+  );
+}
+
 export default function Search() {
   const { token } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
@@ -147,43 +224,61 @@ export default function Search() {
   const [sortByDate, setSortByDate] = React.useState(false);
   const [searchSlack, setSearchSlack] = React.useState(true);
   const [searchTeams, setSearchTeams] = React.useState(true);
+  const [searchReddit, setSearchReddit] = React.useState(true);
   const query = searchParams.get("q") || "";
 
-  const fetchURL =
-    `${API_BASE}/search?` +
-    new URLSearchParams({
-      queryText: query,
-      searchSlack: searchSlack,
-      searchTeams: searchTeams,
-    });
+  const { data: slackData, error: slackError } = useSWR(
+    getSearchKey(query, "slack", token, searchSlack),
+    fetcher
+  );
+  const { data: teamsData, error: teamsError } = useSWR(
+    getSearchKey(query, "teams", token, searchTeams),
+    fetcher
+  );
+  const { data: redditData, error: redditError } = useSWR(
+    getSearchKey(query, "reddit", token, searchReddit),
+    fetcher
+  );
 
-  const { data, error } = useSWR(query ? [fetchURL, token] : null, fetcher, {
-    revalidateOnFocus: false,
-  });
   const { data: savedMessageData, mutate: mutateSavedMessages } = useSWR(
     ["/saveMessage", token],
     fetcher
   );
 
-  // mutate search history upon data arrival
   const { mutate } = useSWRConfig();
-
   useEffect(() => {
-    if (data) {
-      mutate(["/searchHistory", token], (data) => {
-        if (!data?.data?.history) {
-          return data;
-        }
-        return {
-          ...data,
-          data: {
-            ...data.data,
-            history: [...data.data.history, query],
-          },
-        };
-      });
+    if (query) {
+      fetch(`${API_BASE}/searchHistory`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+        body: JSON.stringify({
+          query,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.status === "success") {
+            mutate(["/searchHistory", token], (data) => {
+              if (!data?.data?.history) {
+                return data;
+              }
+              return {
+                ...data,
+                data: {
+                  ...data.data,
+                  history: [...data.data.history, query],
+                },
+              };
+            });
+          }
+        });
+
+      mutate(["/searchHistory", token]);
     }
-  }, [query, data, token, mutate]);
+  }, [query, token, mutate]);
 
   function onSave(searchResult) {
     const savedMessage = savedMessageData?.data?.find(
@@ -258,83 +353,6 @@ export default function Search() {
     );
   }
 
-  const messages = [...(data?.data?.messages || [])];
-  if (messages && sortByDate) {
-    messages.sort((a, b) => b.timestamp - a.timestamp);
-  }
-
-  var content = null;
-  if (!data && !error) {
-    content = <LinearProgress />;
-  } else if (error || data?.status !== "success") {
-    content = <Alert severity="error">{error?.message || data?.message}</Alert>;
-  } else {
-    content = (
-      <>
-        {
-          <Box sx={{ display: "flex", gap: 5, alignItems: "center" }}>
-            <Typography>
-              Found {messages.length} results in {data.data.searchTime / 1000}{" "}
-              seconds
-            </Typography>
-            <FormGroup row={true} sx={{ margin: 0 }}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    value={sortByDate}
-                    onChange={(event) => setSortByDate(event.target.checked)}
-                  />
-                }
-                label="Sort by date?"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    defaultChecked={searchSlack}
-                    value={searchSlack}
-                    onChange={(event) => setSearchSlack(event.target.checked)}
-                  />
-                }
-                label="Search Slack"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    defaultChecked={searchTeams}
-                    value={searchTeams}
-                    onChange={(event) => setSearchTeams(event.target.checked)}
-                  />
-                }
-                label="Search Microsoft Teams"
-              />
-            </FormGroup>
-          </Box>
-        }
-        <div className="Search-items">
-          {messages.map((result) => (
-            <SearchResult
-              key={result.id}
-              {...result}
-              onSave={() =>
-                onSave({
-                  id: result.id,
-                  service: result.service,
-                  result: result.text,
-                  date: result.timestamp,
-                  reference: result.permalink,
-                })
-              }
-              saved={savedMessageData?.data?.some(
-                (savedMessage) => savedMessage.id === result.id
-              )}
-              service={result.service}
-            />
-          ))}
-        </div>
-      </>
-    );
-  }
-
   return (
     <Box sx={{ margin: 2 }}>
       <Box sx={{ display: "flex", gap: 5 }}>
@@ -349,7 +367,71 @@ export default function Search() {
       <Box
         sx={{ display: "flex", flexDirection: "column", gap: 2, marginTop: 1 }}
       >
-        {content}
+        <FormGroup row={true} sx={{ margin: 0 }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={sortByDate}
+                onChange={(event) => setSortByDate(event.target.checked)}
+              />
+            }
+            label="Sort by date?"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={searchSlack}
+                onChange={(event) => setSearchSlack(event.target.checked)}
+              />
+            }
+            label="Search Slack"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={searchTeams}
+                onChange={(event) => setSearchTeams(event.target.checked)}
+              />
+            }
+            label="Search Microsoft Teams"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={searchReddit}
+                onChange={(event) => setSearchReddit(event.target.checked)}
+              />
+            }
+            label="Search Reddit"
+          />
+        </FormGroup>
+        <SearchResultAccordion
+          service="reddit"
+          data={redditData}
+          error={redditError}
+          onSave={onSave}
+          savedMessages={savedMessageData?.data}
+          sortByDate={sortByDate}
+          disabled={!searchReddit}
+        />
+        <SearchResultAccordion
+          service="slack"
+          data={slackData}
+          error={slackError}
+          onSave={onSave}
+          savedMessages={savedMessageData?.data}
+          sortByDate={sortByDate}
+          disabled={!searchSlack}
+        />
+        <SearchResultAccordion
+          service="teams"
+          data={teamsData}
+          error={teamsError}
+          onSave={onSave}
+          savedMessages={savedMessageData?.data}
+          sortByDate={sortByDate}
+          disabled={!searchTeams}
+        />
       </Box>
     </Box>
   );
