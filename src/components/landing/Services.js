@@ -20,10 +20,18 @@ import {
   TEAMS_REDIRECT_URL,
 } from "../../api/api";
 import FullPageCard from "../FullPageCard";
-import { Delete } from "@mui/icons-material";
+import { Add, Delete } from "@mui/icons-material";
 import { useAuth } from "../../contexts/AuthContext";
 import { useSnackbar } from "notistack";
+import slack_icon from "../../images/slack_icon.png";
 import teams_icon from "../../images/teams_icon.png";
+import reddit_icon from "../../images/reddit_icon.png";
+
+const slackAuthorizeUrl =
+  "https://slack.com/oauth/v2/authorize?" +
+  "client_id=4150752765812.4141695798086" +
+  "&scope=&user_scope=search:read" +
+  `&redirect_uri=${SLACK_REDIRECT_URL}`;
 
 const teamsAuthorizeUrl =
   "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?" +
@@ -161,31 +169,39 @@ export default function Services() {
           ))}
         </TableBody>
       </Table>
-      <div
-        style={{
-          alignSelf: "center",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <a
-          href={`https://slack.com/oauth/v2/authorize?client_id=4150752765812.4141695798086&scope=&user_scope=search:read&redirect_uri=${SLACK_REDIRECT_URL}`}
-        >
-          <img
-            alt="Add to Slack"
-            height="40"
-            width="139"
-            src="https://platform.slack-edge.com/img/add_to_slack.png"
-            srcSet="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"
-          />
-        </a>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.3em" }}>
-          <img alt="Microsoft Teams icon" src={teams_icon}></img>
-          <a href={teamsAuthorizeUrl}>Add to Teams</a>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.3em" }}>
-          <a href={redditAuthorizeUrl}>Add to Reddit</a>
+
+      <div className="Connect-Service-Box">
+        <h4 sx={{ color: "black" }}>Connect:</h4>
+        <div>
+          <IconButton disableRipple>
+            <a href={slackAuthorizeUrl}>
+              <img
+                src={slack_icon}
+                alt="Connect Slack account button"
+                className="Connect-Service-Button"
+              />
+            </a>
+          </IconButton>
+
+          <IconButton disableRipple>
+            <a href={teamsAuthorizeUrl}>
+              <img
+                src={teams_icon}
+                alt="Connect Teams account button"
+                className="Connect-Service-Button"
+              />
+            </a>
+          </IconButton>
+
+          <IconButton disableRipple>
+            <a href={redditAuthorizeUrl}>
+              <img
+                src={reddit_icon}
+                alt="Connect Reddit account button"
+                className="Connect-Service-Button"
+              />
+            </a>
+          </IconButton>
         </div>
       </div>
     </FullPageCard>

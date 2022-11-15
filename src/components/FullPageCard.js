@@ -27,6 +27,7 @@ export default function FullPageCard({ loading, navbar, children, style }) {
             sx={{
               margin: "0 auto",
               paddingX: 5,
+              paddingTop: 4,
               paddingBottom: 4,
               display: "flex",
               flexDirection: "column",
@@ -37,6 +38,7 @@ export default function FullPageCard({ loading, navbar, children, style }) {
               maxWidth: 400,
               maxHeight: 725,
               boxSizing: "border-box",
+              borderRadius: "20px",
               ...style,
             }}
           >

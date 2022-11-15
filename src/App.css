@@ -337,3 +337,28 @@ Row-Box > TextField {
 .history-text::-webkit-scrollbar {
   display: none;
 }
+
+/* Services Page */
+
+.Connect-Service-Box {
+  padding: 1em 1em 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.Connect-Service-Button {
+  box-sizing: border-box;
+  object-fit: contain;
+  padding: 0.35em;
+  border-radius: 0.75em;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  width: 2.25em;
+  opacity: 0.7;
+  transition: 0.15s;
+}
+
+.Connect-Service-Button:hover {
+  opacity: 1;
+}
