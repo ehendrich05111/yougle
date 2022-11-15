@@ -5,6 +5,7 @@
   --yougle-yellow: rgb(251, 188, 5);
   --background-white: #efefef;
   --foreground-white: #fdfdfd;
+  --global-font: Arial, Helvetica, sans-serif;
 }
 
 .App {
@@ -48,7 +49,6 @@
 
 .Main {
   display: flex;
-  width: 100%;
   align-items: center;
   justify-content: center;
   flex-direction: column;
@@ -60,11 +60,45 @@
 }
 
 .Search-bar {
-  padding-bottom: 2px 4px;
-  width: 80vw;
+  padding: 2px 4px;
+  width: 60vw;
   display: flex;
   align-items: center;
-  border-radius: 50%;
+}
+
+.Search-Hist-List {
+  width: calc(60vw + 0.5em);
+  /* margin: 1.25em; */
+  display: flex;
+  flex-direction: column;
+}
+
+.Search-Hist-Del-Button {
+  /* position: absolute; */
+  justify-self: center;
+  right: 0%;
+  border: none;
+  background: none;
+  /* color: rgba(0, 0, 0, 0.75); */
+  color: var(--yougle-red);
+}
+
+.Search-Hist-Del-Button:hover {
+  color: var(--foreground-white);
+}
+
+.Search-Hist-Button {
+  padding: 1em;
+  border: none;
+  text-align: left;
+  background: none;
+  font-family: var(--global-font);
+  font-size: 1em;
+  overflow: hidden;
+}
+
+.Search-Hist-Item:hover button {
+  background-color: rgba(0, 0, 0, 0.15);
 }
 
 .Search-items {
@@ -195,7 +229,7 @@
 }
 
 .Nav-link {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--global-font);
   color: rgba(0, 0, 0, 0.75);
   text-decoration: none;
   font-size: 1em;
