@@ -21,7 +21,7 @@ import useSWR from "swr";
 import slack_icon from "../../images/slack_icon.jpeg";
 import teams_icon from "../../images/teams_icon.png";
 import reddit_icon from "../../images/reddit_icon.png";
-import { InsertLink, Star, StarBorderOutlined } from "@mui/icons-material";
+import { InsertLink, Star, StarBorderOutlined, Help } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 
 const SERVICE_ICONS = {
@@ -87,7 +87,28 @@ function SearchResult({
             <InsertLink />
           </IconButton>
         </Box>
-      ) : null}
+      ) : <Box sx={{ display: "flex", alignItems: "center" }}>
+            <IconButton
+              variant="small"
+              onClick={() => {
+                alert("A permalink for this message is unavailable. To access this message, directly navigate to " + serviceName + "->"
+                + teamName + "->#" + channel + ". This message was sent on " + date.toLocaleDateString() + " by " + username + ".");
+              }}
+            >
+              <Help />
+            </IconButton>
+            <IconButton
+              variant="small"
+              onClick={() => {
+                navigator.clipboard.writeText(permalink);
+                enqueueSnackbar("Link copied to clipboard", {
+                  variant: "success",
+                });
+              }}
+            >
+              <InsertLink />
+            </IconButton>
+          </Box>}
       <Typography variant="body1">
         {username}, {date.toLocaleDateString()}
       </Typography>
