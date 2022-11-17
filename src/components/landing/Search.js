@@ -227,17 +227,21 @@ export default function Search() {
   const [searchReddit, setSearchReddit] = React.useState(true);
   const query = searchParams.get("q") || "";
 
+  const swrConfig = { revalidateOnFocus: false };
   const { data: slackData, error: slackError } = useSWR(
     getSearchKey(query, "slack", token, searchSlack),
-    fetcher
+    fetcher,
+    swrConfig
   );
   const { data: teamsData, error: teamsError } = useSWR(
     getSearchKey(query, "teams", token, searchTeams),
-    fetcher
+    fetcher,
+    swrConfig
   );
   const { data: redditData, error: redditError } = useSWR(
     getSearchKey(query, "reddit", token, searchReddit),
-    fetcher
+    fetcher,
+    swrConfig
   );
 
   const { data: savedMessageData, mutate: mutateSavedMessages } = useSWR(

@@ -88,7 +88,11 @@ export function SearchBar(props) {
         if (res.status !== "success") {
           throw new Error(res.message);
         }
-        mutate({ ...data.data.history });
+        mutate({
+          ...data.data.history,
+          data: { history: data?.data?.history?.splice(idx, 1) },
+        });
+        enqueueSnackbar("Deleted", { variant: "success" });
       })
       .catch((err) => {
         enqueueSnackbar(`Error deleting search: ${err.message}`, {
@@ -99,6 +103,7 @@ export function SearchBar(props) {
 
   const submitQuery = () => {
     props.onSubmit(query);
+    mutate({ ...data.data.history });
   };
 
   // Handle keyboard navigation
@@ -127,18 +132,14 @@ export function SearchBar(props) {
 
   return (
     <div
+      ref={searchBarRef}
       onFocus={() => {
         setShowHistory(true);
       }}
-      onMouseDown={(e) => {
-        if (e.target === searchBarRef.current) {
-          e.preventDefault();
-        } else {
-          setShowHistory(true);
-        }
-      }}
       onBlur={(e) => {
-        setShowHistory(false);
+        if (!searchBarRef.current.contains(e.relatedTarget)) {
+          setShowHistory(false);
+        }
       }}
     >
       <Paper
@@ -158,7 +159,6 @@ export function SearchBar(props) {
           value={query || ""}
           inputProps={{ "aria-label": "search your chats..." }}
           onChange={(event) => setQuery(event.target.value)}
-          ref={searchBarRef}
         />
         <IconButton
           type="button"
@@ -200,7 +200,6 @@ export function SearchBar(props) {
                 <button
                   onClick={() => {
                     dispatch({ type: "select", payload: idx });
-                    setQuery(item);
                     props.onSubmit(item);
                     setShowHistory(false);
                   }}
@@ -212,7 +211,7 @@ export function SearchBar(props) {
                 <IconButton
                   type="button"
                   onClick={() => {
-                    delHistoryItem(history.length - idx - 1);
+                    delHistoryItem(data.data.history.length - idx - 1);
                   }}
                   disableRipple={true}
                 >
