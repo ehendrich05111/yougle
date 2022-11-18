@@ -20,7 +20,7 @@ import {
   TEAMS_REDIRECT_URL,
 } from "../../api/api";
 import FullPageCard from "../FullPageCard";
-import { Add, Delete } from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 import { useAuth } from "../../contexts/AuthContext";
 import { useSnackbar } from "notistack";
 import slack_icon from "../../images/slack_icon.png";
