@@ -27,6 +27,7 @@ import reddit_icon from "../../images/reddit_icon.png";
 import {
   CopyAll,
   ExpandMore,
+  Help,
   InsertLink,
   OpenInNew,
   Star,
@@ -129,7 +130,15 @@ function SearchResult({
                 <OpenInNew />
               </IconButton>
             </Link>
-          ) : null}
+          ) : <IconButton
+                variant="small"
+                onClick={() => {
+                  alert("A permalink for this message is unavailable. To access this message, directly navigate to " + serviceName + "->"
+                  + teamName + "->#" + channel + ". This message was sent on " + date.toLocaleDateString() + " by " + username + ".");
+                }}
+              >
+                <Help />
+              </IconButton>}
         </div>
       </Box>
 
