@@ -39,8 +39,7 @@ const teamsAuthorizeUrl =
   "&response_type=code" +
   `&redirect_uri=${TEAMS_REDIRECT_URL}` +
   "&response_mode=query" +
-  // "&scope=User.Read%20Chat.Read%20Chat.ReadWrite%20ChannelMessage.Read.All%20offline_access" +
-  "&scope=User.Read%20Chat.Read%20Chat.ReadWrite%20offline_access" +
+  "&scope=User.Read%20Chat.Read%20Chat.ReadWrite%20ChannelMessage.Read.All%20Channel.ReadBasic.All%20offline_access" +
   "&state=12345" +
   "&prompt=consent";
 
