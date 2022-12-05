@@ -105,19 +105,19 @@
   column-gap: 2em;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 860px) {
   .Search-items { 
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1290px) {
   .Search-items { 
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-@media (min-width: 1600px) {
+@media (min-width: 1720px) {
   .Search-items { 
     grid-template-columns: repeat(4, 1fr);
   }
