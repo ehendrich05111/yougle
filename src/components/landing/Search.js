@@ -152,12 +152,14 @@ function SearchResult({
   );
 }
 
-function getSearchKey(query, service, token, shouldFetch) {
+function getSearchKey(query, service, token, shouldFetch, getDirectMessages, getGroupMessages) {
   return shouldFetch
     ? [
         `${API_BASE}/search/${service}?` +
           new URLSearchParams({
             queryText: query,
+            getDirectMessages: getDirectMessages,
+            getGroupMessages: getGroupMessages
           }),
         token,
       ]
@@ -234,21 +236,23 @@ export default function Search() {
   const [searchSlack, setSearchSlack] = React.useState(true);
   const [searchTeams, setSearchTeams] = React.useState(true);
   const [searchReddit, setSearchReddit] = React.useState(true);
+  const [searchDirectMessages, setSearchDirectMessages] = React.useState(true);
+  const [searchGroupMessages, setSearchGroupMessages] = React.useState(true);
   const query = searchParams.get("q") || "";
 
   const swrConfig = { revalidateOnFocus: false };
   const { data: slackData, error: slackError } = useSWR(
-    getSearchKey(query, "slack", token, searchSlack),
+    getSearchKey(query, "slack", token, searchSlack, searchDirectMessages, searchGroupMessages),
     fetcher,
     swrConfig
   );
   const { data: teamsData, error: teamsError } = useSWR(
-    getSearchKey(query, "teams", token, searchTeams),
+    getSearchKey(query, "teams", token, searchTeams, searchDirectMessages, searchGroupMessages),
     fetcher,
     swrConfig
   );
   const { data: redditData, error: redditError } = useSWR(
-    getSearchKey(query, "reddit", token, searchReddit),
+    getSearchKey(query, "reddit", token, searchReddit, searchDirectMessages, searchGroupMessages),
     fetcher,
     swrConfig
   );
@@ -416,6 +420,24 @@ export default function Search() {
               />
             }
             label="Search Reddit"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={searchDirectMessages}
+                onChange={(event) => setSearchDirectMessages(event.target.checked)}
+              />
+            }
+            label="Include DMs"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={searchGroupMessages}
+                onChange={(event) => setSearchGroupMessages(event.target.checked)}
+              />
+            }
+            label="Include Group Messages"
           />
         </FormGroup>
         <SearchResultAccordion
