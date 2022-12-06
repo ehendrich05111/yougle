@@ -52,6 +52,7 @@ function SearchResult({
   onSave,
   service,
   theme,
+  files,
 }) {
   const { enqueueSnackbar } = useSnackbar();
   const date = new Date(timestamp * 1000);
@@ -163,6 +164,21 @@ function SearchResult({
           {username}, {date.toLocaleDateString()}:
         </Typography>
         <Typography variant="body2">{text}</Typography>
+        {files && files.length > 0 && (
+          <>
+            <Typography
+              variant="body1"
+              sx={{ fontWeight: "bold", marginTop: 1 }}
+            >
+              Attachments
+            </Typography>
+            {files.map(({ name, url }) => (
+              <Link href={url} target="_blank">
+                {name}
+              </Link>
+            ))}
+          </>
+        )}
       </div>
     </Paper>
   );
@@ -200,12 +216,17 @@ function SearchResultAccordion(props) {
     sortByDate,
     fromTime,
     toTime,
+    attachmentsOnly,
   } = props;
 
   var messages = [...(data?.data?.messages || [])];
   if (messages) {
     if (sortByDate) {
       messages.sort((a, b) => a.timestamp - b.timestamp);
+    }
+
+    if (attachmentsOnly) {
+      messages = messages.filter((m) => m.files && m.files.length > 0);
     }
 
     if (fromTime) {
@@ -283,6 +304,7 @@ export default function Search(props) {
   const [searchReddit, setSearchReddit] = React.useState(true);
   const [searchDirectMessages, setSearchDirectMessages] = React.useState(true);
   const [searchGroupMessages, setSearchGroupMessages] = React.useState(true);
+  const [attachmentsOnly, setAttachmentsOnly] = React.useState(false);
   const [fromTime, setFromTime] = React.useState(null);
   const [toTime, setToTime] = React.useState(null);
   const query = searchParams.get("q") || "";
@@ -432,6 +454,7 @@ export default function Search(props) {
         ["Search Reddit", searchReddit, setSearchReddit],
         ["Include DMs", searchDirectMessages, setSearchDirectMessages],
         ["Include Group Messages", searchGroupMessages, setSearchGroupMessages],
+        ["Only messages with attachments", attachmentsOnly, setAttachmentsOnly],
       ]}
       fromTime={fromTime}
       setFromTime={setFromTime}
@@ -541,6 +564,7 @@ export default function Search(props) {
           theme={props.theme}
           fromTime={fromTime}
           toTime={toTime}
+          attachmentsOnly={attachmentsOnly}
         />
         <SearchResultAccordion
           service="slack"
@@ -553,6 +577,7 @@ export default function Search(props) {
           theme={props.theme}
           fromTime={fromTime}
           toTime={toTime}
+          attachmentsOnly={attachmentsOnly}
         />
         <SearchResultAccordion
           service="teams"
@@ -565,6 +590,7 @@ export default function Search(props) {
           theme={props.theme}
           fromTime={fromTime}
           toTime={toTime}
+          attachmentsOnly={attachmentsOnly}
         />
       </Box>
     </Box>
