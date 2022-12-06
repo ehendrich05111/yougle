@@ -14,6 +14,7 @@ import logo from "./logo.svg";
 import "./App.css";
 import { useAuth } from "./contexts/AuthContext";
 import ChangePassword from "./components/ChangePassword";
+import Admin from "./components/Admin";
 
 class Example extends Component {
   constructor(props) {
@@ -100,6 +101,7 @@ export default function App() {
         <Route path="/login" element={<Login />}></Route>
         <Route path="/forgotpassword" element={<ForgotPassword />}></Route>
         <Route path="/changepassword" element={<ChangePassword />}></Route>
+        <Route path="/admin" element={<Admin />}></Route>
         <Route
           path="/slack_callback"
           element={<OAuthCallback serviceName="slack" />}
