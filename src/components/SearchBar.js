@@ -186,7 +186,13 @@ export function SearchBar(props) {
                   display: "flex",
                   justifyContent: "space-between",
                   backgroundColor:
-                    idx === state.selectedIndex ? "rgba(0,0,0, 0.25)" : "white",
+                    idx === state.selectedIndex
+                      ? props.theme
+                        ? "white"
+                        : "rgba(0,0,0, 0.35)"
+                      : props.theme
+                      ? "rgba(0,0,0, 0.35)"
+                      : "white",
                 }}
                 key={idx}
                 onMouseEnter={(e) => {
@@ -204,7 +210,17 @@ export function SearchBar(props) {
                     setShowHistory(false);
                   }}
                   className="Search-Hist-Button"
-                  style={{ width: "100%" }}
+                  style={{
+                    width: "100%",
+                    color:
+                      idx === state.selectedIndex
+                        ? props.theme
+                          ? "black"
+                          : "white"
+                        : props.theme
+                        ? "white"
+                        : "black",
+                  }}
                 >
                   {item}
                 </button>
@@ -215,7 +231,19 @@ export function SearchBar(props) {
                   }}
                   disableRipple={true}
                 >
-                  <Clear className="Search-Hist-Del-Button" />
+                  <Clear
+                    className="Search-Hist-Del-Button"
+                    style={{
+                      color:
+                        idx === state.selectedIndex
+                          ? props.theme
+                            ? "black"
+                            : "white"
+                          : props.theme
+                          ? "white"
+                          : "black",
+                    }}
+                  />
                 </IconButton>
               </div>
             ))}

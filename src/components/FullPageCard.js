@@ -8,7 +8,7 @@ export default function FullPageCard({ loading, navbar, children, style }) {
         width: "100%",
         height: "100vh",
         padding: "4em 0",
-        marginTop: navbar ? "-8em" : "-4em",
+        marginTop: navbar ? "-4em" : 0,
         boxSizing: "border-box",
       }}
     >

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -15,6 +15,9 @@ import "./App.css";
 import { useAuth } from "./contexts/AuthContext";
 import ChangePassword from "./components/ChangePassword";
 import Admin from "./components/Admin";
+import { createTheme, ThemeProvider } from "@mui/material";
+import useSWR from "swr";
+import { fetcher } from "./api/api";
 
 class Example extends Component {
   constructor(props) {
@@ -94,40 +97,65 @@ function AuthorizedRoute(props) {
 }
 
 export default function App() {
+  const { token } = useAuth();
+  const { data } = useSWR(["/settings", token], fetcher);
+  const [isDark, setIsDark] = useState(false);
+
+  const darkTheme = createTheme({
+    palette: {
+      mode: isDark ? "dark" : "light",
+    },
+  });
+
+  useEffect(() => {
+    if (token) setIsDark(data?.data.darkMode);
+    document.getElementById("root").style.backgroundColor = isDark
+      ? "#1c1e21"
+      : "#efefef";
+  });
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/example" element={<Example />}></Route>
-        <Route path="/login" element={<Login />}></Route>
-        <Route path="/forgotpassword" element={<ForgotPassword />}></Route>
-        <Route path="/changepassword" element={<ChangePassword />}></Route>
-        <Route path="/admin" element={<Admin />}></Route>
-        <Route
-          path="/slack_callback"
-          element={<OAuthCallback serviceName="slack" />}
-        ></Route>
-        <Route
-          path="/teams_callback"
-          element={<OAuthCallback serviceName="teams" />}
-        ></Route>
-        <Route
-          path="/reddit_callback"
-          element={<OAuthCallback serviceName="reddit" />}
-        ></Route>
-        <Route path="/signup" element={<Join />}></Route>
-        <Route path="/" element={<Navigate to="/search" />}></Route>
-        {Object.values(MainPages).map((path) => (
+    <ThemeProvider theme={darkTheme}>
+      <Router>
+        <Routes>
+          <Route path="/example" element={<Example theme={isDark} />}></Route>
+          <Route path="/login" element={<Login theme={isDark} />}></Route>
           <Route
-            key={path}
-            path={path}
-            element={
-              <AuthorizedRoute>
-                <Landing page={path} />
-              </AuthorizedRoute>
-            }
-          />
-        ))}
-      </Routes>
-    </Router>
+            path="/forgotpassword"
+            element={<ForgotPassword theme={isDark} />}
+          ></Route>
+          <Route
+            path="/changepassword"
+            element={<ChangePassword theme={isDark} />}
+          ></Route>
+          <Route path="/admin" element={<Admin theme={isDark} />}></Route>
+          <Route
+            path="/slack_callback"
+            element={<OAuthCallback serviceName="slack" />}
+          ></Route>
+          <Route
+            path="/teams_callback"
+            element={<OAuthCallback serviceName="teams" />}
+          ></Route>
+          <Route
+            path="/reddit_callback"
+            element={<OAuthCallback serviceName="reddit" />}
+          ></Route>
+          <Route path="/signup" element={<Join theme={isDark} />}></Route>
+          <Route path="/" element={<Navigate to="/search" />}></Route>
+          {Object.values(MainPages).map((path) => (
+            <Route
+              key={path}
+              path={path}
+              element={
+                <AuthorizedRoute>
+                  <Landing page={path} theme={isDark} />
+                </AuthorizedRoute>
+              }
+            />
+          ))}
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }

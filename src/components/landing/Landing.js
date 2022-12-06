@@ -36,24 +36,24 @@ export default function Landing(props) {
 
   var content = null;
   if (props.page === MainPages.Search) {
-    content = <Search />;
+    content = <Search theme={props.theme} />;
   } else if (props.page === MainPages.Services) {
-    content = <Services />;
+    content = <Services theme={props.theme} />;
   } else if (props.page === MainPages.Saved) {
-    content = <SavedMessages />;
+    content = <SavedMessages theme={props.theme} />;
   } else if (props.page === MainPages.Profile) {
-    content = <Profile />;
+    content = <Profile theme={props.theme} />;
   } else if (props.page === MainPages.History) {
-    content = <History />;
+    content = <History theme={props.theme} />;
   } else if (props.page === MainPages.Settings) {
-    content = <Settings />;
+    content = <Settings theme={props.theme} />;
   } else {
     content = <p>Invalid page.</p>;
   }
 
   return (
     <div>
-      <Navbar />
+      <Navbar theme={props.theme} />
       {content}
     </div>
   );

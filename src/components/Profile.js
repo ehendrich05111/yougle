@@ -80,7 +80,12 @@ const SimpleDialog = (props) => {
       >
         {progress / 10}
       </p>
-      <p style={{ textAlign: "center", color: "rgb(100, 100, 100)" }}>
+      <p
+        style={{
+          textAlign: "center",
+          color: props.theme ? "white" : "rgb(100, 100, 100)",
+        }}
+      >
         You cannot undo this!
       </p>
       <Box style={{ display: "flex", justifyContent: "space-around" }}>
@@ -102,8 +107,10 @@ const SimpleDialog = (props) => {
           id="cancel-del"
           variant="contained"
           style={{
-            backgroundColor: "rgba(128, 128, 128, 0.25)",
-            color: "black",
+            backgroundColor: props.theme
+              ? "rgba(255, 255, 255, 0.25)"
+              : "rgba(128, 128, 128, 0.25)",
+            color: props.theme ? "white" : "black",
             marginRight: "5%",
             marginBottom: "5%",
             height: "20%",
@@ -125,7 +132,7 @@ SimpleDialog.propTypes = {
   progress: PropTypes.number.isRequired,
 };
 
-export default function Profile() {
+export default function Profile(props) {
   const { token } = useAuth();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -296,18 +303,36 @@ export default function Profile() {
   };
 
   return (
-    <div>
+    <div className="navbarpage">
       {isEmpty && (isEditing || isEditName || isEditMail || isEditPass) && (
         <Alert severity="warning">Please fill the required information</Alert>
       )}
       <Box className="Acc-box">
         <Card
           className="Acc-card"
-          sx={{ borderRadius: "15px", boxShadow: "none" }}
+          sx={{
+            borderRadius: "15px",
+            boxShadow: "none",
+            border: props.theme
+              ? "thin solid rgba(255, 255, 255, 0.25)"
+              : "none",
+            background: props.theme
+              ? "linear-gradient(var(--foreground-black) 20%, var(--background-black) 0%)"
+              : "linear-gradient(var(--yougle-blue) 20%, var(--background-white) 0%)",
+          }}
         >
           <Box style={{ display: "flex", justifyContent: "space-between" }}>
-            {/* {progress} */}
-            <AccountCircle id="Acc-pic" />
+            <AccountCircle
+              id="Acc-pic"
+              style={{
+                color: props.theme
+                  ? "rgba(255,255,255, 0.55)"
+                  : "var(--yougle-green)",
+                backgroundColor: props.theme
+                  ? "var(--background-black)"
+                  : "var(--background-white)",
+              }}
+            />
             <SimpleDialog
               open={isDelete}
               onDelete={handleDelete}
@@ -362,7 +387,14 @@ export default function Profile() {
               </Button>
             )}
           </Box>
-          <Box id="Info-container">
+          <Box
+            id="Info-container"
+            style={{
+              backgroundColor: props.theme
+                ? "var(--foreground-black)"
+                : "var(--foreground-white)",
+            }}
+          >
             <span style={{ display: "flex:", justifyContent: "space-between" }}>
               <Box
                 className="Col-box"
