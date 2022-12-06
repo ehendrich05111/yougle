@@ -1,11 +1,27 @@
 import React, { useState, useEffect, useReducer, useMemo } from "react";
 import SearchIcon from "@mui/icons-material/Search";
-import { Card, Paper, InputBase, IconButton } from "@mui/material";
+import {
+  Card,
+  Paper,
+  InputBase,
+  IconButton,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  Button,
+} from "@mui/material";
 import { API_BASE, fetcher } from "../api/api";
 import { useAuth } from "../contexts/AuthContext";
-import { Clear } from "@mui/icons-material";
+import { Clear, Tune } from "@mui/icons-material";
 import useSWR from "swr";
 import { useSnackbar } from "notistack";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Stack } from "@mui/system";
 
 const historyLength = 6;
 
@@ -15,6 +31,7 @@ export function SearchBar(props) {
   const { data, mutate } = useSWR(["/searchHistory", token], fetcher);
   const [query, setQuery] = useState(props.query || "");
   const [showHistory, setShowHistory] = useState(false);
+  const [showSearchSettings, setShowSearchSettings] = useState(false);
   const searchBarRef = React.useRef(null);
 
   const initialState = { selectedIndex: -1 };
@@ -131,109 +148,100 @@ export function SearchBar(props) {
   }, [history, state.selectedIndex, showHistory]);
 
   return (
-    <div
-      ref={searchBarRef}
-      onFocus={() => {
-        setShowHistory(true);
-      }}
-      onBlur={(e) => {
-        if (!searchBarRef.current.contains(e.relatedTarget)) {
-          setShowHistory(false);
-        }
-      }}
-    >
-      <Paper
-        component="form"
-        variant="outlined"
-        className="Search-bar"
-        style={{ borderRadius: "0" }}
-        onSubmit={(e) => {
-          e.preventDefault();
-          setShowHistory(false);
-          submitQuery();
-        }}
-      >
-        <InputBase
-          sx={{ ml: 1, flex: 1 }}
-          placeholder="Search your chats..."
-          value={query || ""}
-          inputProps={{ "aria-label": "search your chats..." }}
-          onChange={(event) => setQuery(event.target.value)}
-        />
-        <IconButton
-          type="button"
-          sx={{ p: "10px" }}
-          aria-label="search"
-          onClick={submitQuery}
-        >
-          <SearchIcon />
-        </IconButton>
-      </Paper>
-      {history.length > 0 && showHistory && (
-        <Card
-          style={{
-            position: "absolute",
-            borderRadius: "0 0 10px 10px",
-            marginLeft: "1px",
-            boxShadow: "0 1px 2px rgba(0, 0, 0, 0.15)",
-            zIndex: 2, // required so mouseleave doesn't fire when hovering over covered checkbox
+    <>
+      <div ref={searchBarRef}>
+        <Paper
+          component="form"
+          variant="outlined"
+          className="Search-bar"
+          style={{ borderRadius: "0" }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            setShowHistory(false);
+            submitQuery();
+          }}
+          onFocus={() => {
+            setShowHistory(true);
+          }}
+          onBlur={(e) => {
+            if (!searchBarRef.current.contains(e.relatedTarget)) {
+              setShowHistory(false);
+            }
           }}
         >
-          <div className="Search-Hist-List">
-            {history.map((item, idx) => (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  backgroundColor:
-                    idx === state.selectedIndex
-                      ? props.theme
-                        ? "white"
-                        : "rgba(0,0,0, 0.35)"
-                      : props.theme
-                      ? "rgba(0,0,0, 0.35)"
-                      : "white",
-                }}
-                key={idx}
-                onMouseEnter={(e) => {
-                  e.stopPropagation();
-                  dispatch({ type: "select", payload: idx });
-                }}
-                onMouseLeave={() => {
-                  dispatch({ type: "select", payload: -1 });
-                }}
-              >
-                <button
-                  onClick={() => {
-                    dispatch({ type: "select", payload: idx });
-                    props.onSubmit(item);
-                    setShowHistory(false);
-                  }}
-                  className="Search-Hist-Button"
+          <InputBase
+            sx={{ ml: 1, flex: 1 }}
+            placeholder="Search your chats..."
+            value={query || ""}
+            inputProps={{ "aria-label": "search your chats..." }}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+          <IconButton
+            type="button"
+            sx={{ p: "10px" }}
+            aria-label="search"
+            onClick={submitQuery}
+          >
+            <SearchIcon />
+          </IconButton>
+          <IconButton
+            type="button"
+            sx={{ p: "10px" }}
+            aria-label="settings"
+            onMouseDown={(e) => {
+              // do not show history when settings is clicked
+              e.preventDefault();
+            }}
+            onClick={() => {
+              setShowSearchSettings(true);
+            }}
+          >
+            <Tune />
+          </IconButton>
+        </Paper>
+        {history.length > 0 && showHistory && (
+          <Card
+            style={{
+              position: "absolute",
+              borderRadius: "0 0 10px 10px",
+              marginLeft: "1px",
+              boxShadow: "0 1px 2px rgba(0, 0, 0, 0.15)",
+              zIndex: 2, // required so mouseleave doesn't fire when hovering over covered checkbox
+            }}
+          >
+            <div className="Search-Hist-List">
+              {history.map((item, idx) => (
+                <div
                   style={{
-                    width: "100%",
-                    color:
+                    display: "flex",
+                    justifyContent: "space-between",
+                    backgroundColor:
                       idx === state.selectedIndex
                         ? props.theme
-                          ? "black"
-                          : "white"
+                          ? "white"
+                          : "rgba(0,0,0, 0.35)"
                         : props.theme
-                        ? "white"
-                        : "black",
+                        ? "rgba(0,0,0, 0.35)"
+                        : "white",
+                  }}
+                  key={idx}
+                  onMouseEnter={(e) => {
+                    e.stopPropagation();
+                    dispatch({ type: "select", payload: idx });
+                  }}
+                  onMouseLeave={() => {
+                    dispatch({ type: "select", payload: -1 });
                   }}
                 >
-                  {item}
-                </button>
-                <IconButton
-                  type="button"
-                  onClick={() => {
-                    delHistoryItem(data.data.history.length - idx - 1);
-                  }}
-                  disableRipple={true}
-                >
-                  <Clear
-                    className="Search-Hist-Del-Button"
+                  <button
+                    onClick={() => {
+                      dispatch({ type: "select", payload: idx });
+                      props.onSubmit(item);
+                      setShowHistory(false);
+                    }}
+                    className="Search-Hist-Button"
                     style={{
+                      width: "100%",
                       color:
                         idx === state.selectedIndex
                           ? props.theme
@@ -243,13 +251,81 @@ export function SearchBar(props) {
                           ? "white"
                           : "black",
                     }}
-                  />
-                </IconButton>
-              </div>
+                  >
+                    {item}
+                  </button>
+                  <IconButton
+                    type="button"
+                    onClick={() => {
+                      delHistoryItem(data.data.history.length - idx - 1);
+                    }}
+                    disableRipple={true}
+                  >
+                    <Clear
+                      className="Search-Hist-Del-Button"
+                      style={{
+                        color:
+                          idx === state.selectedIndex
+                            ? props.theme
+                              ? "black"
+                              : "white"
+                            : props.theme
+                            ? "white"
+                            : "black",
+                      }}
+                    />
+                  </IconButton>
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
+      </div>
+      <Dialog
+        open={showSearchSettings}
+        onClose={() => {
+          setShowSearchSettings(false);
+        }}
+      >
+        <DialogTitle>Search settings</DialogTitle>
+        <DialogContent>
+          <FormGroup>
+            {props.options.map(([label, value, setValue]) => (
+              <FormControlLabel
+                key={label}
+                control={<Checkbox checked={value} />}
+                onChange={(event) => setValue(event.target.checked)}
+                label={label}
+              />
             ))}
-          </div>
-        </Card>
-      )}
-    </div>
+          </FormGroup>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Stack spacing={2}>
+              <DateTimePicker
+                label="From"
+                renderInput={(props) => <TextField {...props} />}
+                value={props.fromTime}
+                onChange={props.setFromTime}
+              />
+              <DateTimePicker
+                label="To"
+                renderInput={(props) => <TextField {...props} />}
+                value={props.toTime}
+                onChange={props.setToTime}
+              />
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  props.setFromTime(null);
+                  props.setToTime(null);
+                }}
+              >
+                Clear time range
+              </Button>
+            </Stack>
+          </LocalizationProvider>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
