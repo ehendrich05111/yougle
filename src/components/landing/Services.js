@@ -34,8 +34,8 @@ const slackAuthorizeUrl =
   `&redirect_uri=${SLACK_REDIRECT_URL}`;
 
 const teamsAuthorizeUrl =
-  "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?" +
-  "client_id=12718039-8a0c-40d3-bdb4-00fef0b4a2ca" +
+  "https://login.microsoftonline.com/04e81588-f2a8-434c-bce0-365401b0f4b8/oauth2/v2.0/authorize?" +
+  "client_id=2d534f66-452f-4639-9e0f-cd8677b9232e" +
   "&response_type=code" +
   `&redirect_uri=${TEAMS_REDIRECT_URL}` +
   "&response_mode=query" +
