@@ -15,7 +15,7 @@ import "./App.css";
 import { useAuth } from "./contexts/AuthContext";
 import ChangePassword from "./components/ChangePassword";
 import Admin from "./components/Admin";
-import { createTheme, ThemeProvider } from "@mui/material";
+import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import useSWR from "swr";
 import { fetcher } from "./api/api";
 
@@ -112,10 +112,11 @@ export default function App() {
     document.getElementById("root").style.backgroundColor = isDark
       ? "#1c1e21"
       : "#efefef";
-  });
+  }, [data, isDark, token, setIsDark]);
 
   return (
     <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
       <Router>
         <Routes>
           <Route path="/example" element={<Example theme={isDark} />}></Route>

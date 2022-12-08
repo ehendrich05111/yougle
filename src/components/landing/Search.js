@@ -52,6 +52,7 @@ function SearchResult({
   onSave,
   service,
   theme,
+  files,
 }) {
   const { enqueueSnackbar } = useSnackbar();
   const date = new Date(timestamp * 1000);
@@ -163,6 +164,21 @@ function SearchResult({
           {username}, {date.toLocaleDateString()}:
         </Typography>
         <Typography variant="body2">{text}</Typography>
+        {files && files.length > 0 && (
+          <>
+            <Typography
+              variant="body1"
+              sx={{ fontWeight: "bold", marginTop: 1 }}
+            >
+              Attachments
+            </Typography>
+            {files.map(({ name, url }) => (
+              <Link href={url} target="_blank">
+                {name}
+              </Link>
+            ))}
+          </>
+        )}
       </div>
     </Paper>
   );
@@ -190,12 +206,38 @@ function getSearchKey(
 }
 
 function SearchResultAccordion(props) {
-  const { service, data, error, onSave, savedMessages, disabled, sortByDate } =
-    props;
+  const {
+    service,
+    data,
+    error,
+    onSave,
+    savedMessages,
+    disabled,
+    sortByDate,
+    fromTime,
+    toTime,
+    attachmentsOnly,
+  } = props;
 
-  const messages = [...(data?.data?.messages || [])];
-  if (messages && sortByDate) {
-    messages.sort((a, b) => b.timestamp - a.timestamp);
+  var messages = [...(data?.data?.messages || [])];
+  if (messages) {
+    if (sortByDate) {
+      messages.sort((a, b) => a.timestamp - b.timestamp);
+    }
+
+    if (attachmentsOnly) {
+      messages = messages.filter((m) => m.files && m.files.length > 0);
+    }
+
+    if (fromTime) {
+      const fromTimeEpoch = fromTime.valueOf() / 1000;
+      messages = messages.filter((m) => m.timestamp >= fromTimeEpoch);
+    }
+
+    if (toTime) {
+      const toTimeEpoch = toTime.valueOf() / 1000;
+      messages = messages.filter((m) => m.timestamp <= toTimeEpoch);
+    }
   }
 
   var content = null;
@@ -262,6 +304,9 @@ export default function Search(props) {
   const [searchReddit, setSearchReddit] = React.useState(true);
   const [searchDirectMessages, setSearchDirectMessages] = React.useState(true);
   const [searchGroupMessages, setSearchGroupMessages] = React.useState(true);
+  const [attachmentsOnly, setAttachmentsOnly] = React.useState(false);
+  const [fromTime, setFromTime] = React.useState(null);
+  const [toTime, setToTime] = React.useState(null);
   const query = searchParams.get("q") || "";
 
   const swrConfig = { revalidateOnFocus: false };
@@ -403,6 +448,18 @@ export default function Search(props) {
         setSearchParams({ q: newQuery });
       }}
       theme={props.theme}
+      options={[
+        ["Search Slack", searchSlack, setSearchSlack],
+        ["Search Teams", searchTeams, setSearchTeams],
+        ["Search Reddit", searchReddit, setSearchReddit],
+        ["Include DMs", searchDirectMessages, setSearchDirectMessages],
+        ["Include Group Messages", searchGroupMessages, setSearchGroupMessages],
+        ["Only messages with attachments", attachmentsOnly, setAttachmentsOnly],
+      ]}
+      fromTime={fromTime}
+      setFromTime={setFromTime}
+      toTime={toTime}
+      setToTime={setToTime}
     />
   );
 
@@ -417,7 +474,7 @@ export default function Search(props) {
   }
 
   return (
-    <Box sx={{ margin: 2 }}>
+    <Box sx={{ padding: 2 }}>
       <Box sx={{ display: "flex", gap: 5 }}>
         <img
           className="Yougle-logo"
@@ -505,6 +562,9 @@ export default function Search(props) {
           sortByDate={sortByDate}
           disabled={!searchReddit}
           theme={props.theme}
+          fromTime={fromTime}
+          toTime={toTime}
+          attachmentsOnly={attachmentsOnly}
         />
         <SearchResultAccordion
           service="slack"
@@ -515,6 +575,9 @@ export default function Search(props) {
           sortByDate={sortByDate}
           disabled={!searchSlack}
           theme={props.theme}
+          fromTime={fromTime}
+          toTime={toTime}
+          attachmentsOnly={attachmentsOnly}
         />
         <SearchResultAccordion
           service="teams"
@@ -525,6 +588,9 @@ export default function Search(props) {
           sortByDate={sortByDate}
           disabled={!searchTeams}
           theme={props.theme}
+          fromTime={fromTime}
+          toTime={toTime}
+          attachmentsOnly={attachmentsOnly}
         />
       </Box>
     </Box>
