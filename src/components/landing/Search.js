@@ -51,6 +51,7 @@ function SearchResult({
   saved,
   onSave,
   service,
+  theme,
 }) {
   const { enqueueSnackbar } = useSnackbar();
   const date = new Date(timestamp * 1000);
@@ -91,7 +92,9 @@ function SearchResult({
             </IconButton>
           </Tooltip>
           <Typography variant="h6" className="Chat-title">
-            <div id="team-name">{teamName}</div>
+            <div id="team-name" style={{ color: theme ? "white" : "inherit" }}>
+              {teamName}
+            </div>
             <div id="channel-name"> #{channel}</div>
           </Typography>
         </div>
@@ -130,15 +133,28 @@ function SearchResult({
                 <OpenInNew />
               </IconButton>
             </Link>
-          ) : <IconButton
-                variant="small"
-                onClick={() => {
-                  alert("A permalink for this message is unavailable. To access this message, directly navigate to " + serviceName + "->"
-                  + teamName + "->#" + channel + ". This message was sent on " + date.toLocaleDateString() + " by " + username + ".");
-                }}
-              >
-                <Help />
-              </IconButton>}
+          ) : (
+            <IconButton
+              variant="small"
+              onClick={() => {
+                alert(
+                  "A permalink for this message is unavailable. To access this message, directly navigate to " +
+                    serviceName +
+                    "->" +
+                    teamName +
+                    "->#" +
+                    channel +
+                    ". This message was sent on " +
+                    date.toLocaleDateString() +
+                    " by " +
+                    username +
+                    "."
+                );
+              }}
+            >
+              <Help />
+            </IconButton>
+          )}
         </div>
       </Box>
 
@@ -152,14 +168,21 @@ function SearchResult({
   );
 }
 
-function getSearchKey(query, service, token, shouldFetch, getDirectMessages, getGroupMessages) {
+function getSearchKey(
+  query,
+  service,
+  token,
+  shouldFetch,
+  getDirectMessages,
+  getGroupMessages
+) {
   return shouldFetch
     ? [
         `${API_BASE}/search/${service}?` +
           new URLSearchParams({
             queryText: query,
             getDirectMessages: getDirectMessages,
-            getGroupMessages: getGroupMessages
+            getGroupMessages: getGroupMessages,
           }),
         token,
       ]
@@ -211,6 +234,7 @@ function SearchResultAccordion(props) {
                 (savedMessage) => savedMessage.id === result.id
               )}
               service={result.service}
+              theme={props.theme}
             />
           ))}
         </div>
@@ -228,7 +252,7 @@ function SearchResultAccordion(props) {
   );
 }
 
-export default function Search() {
+export default function Search(props) {
   const { token } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -242,17 +266,38 @@ export default function Search() {
 
   const swrConfig = { revalidateOnFocus: false };
   const { data: slackData, error: slackError } = useSWR(
-    getSearchKey(query, "slack", token, searchSlack, searchDirectMessages, searchGroupMessages),
+    getSearchKey(
+      query,
+      "slack",
+      token,
+      searchSlack,
+      searchDirectMessages,
+      searchGroupMessages
+    ),
     fetcher,
     swrConfig
   );
   const { data: teamsData, error: teamsError } = useSWR(
-    getSearchKey(query, "teams", token, searchTeams, searchDirectMessages, searchGroupMessages),
+    getSearchKey(
+      query,
+      "teams",
+      token,
+      searchTeams,
+      searchDirectMessages,
+      searchGroupMessages
+    ),
     fetcher,
     swrConfig
   );
   const { data: redditData, error: redditError } = useSWR(
-    getSearchKey(query, "reddit", token, searchReddit, searchDirectMessages, searchGroupMessages),
+    getSearchKey(
+      query,
+      "reddit",
+      token,
+      searchReddit,
+      searchDirectMessages,
+      searchGroupMessages
+    ),
     fetcher,
     swrConfig
   );
@@ -357,6 +402,7 @@ export default function Search() {
       onSubmit={(newQuery) => {
         setSearchParams({ q: newQuery });
       }}
+      theme={props.theme}
     />
   );
 
@@ -384,7 +430,13 @@ export default function Search() {
       <Box
         sx={{ display: "flex", flexDirection: "column", gap: 2, marginTop: 1 }}
       >
-        <FormGroup row={true} sx={{ margin: 0 }}>
+        <FormGroup
+          row={true}
+          sx={{
+            margin: 0,
+            color: props.theme ? "var(--background-white)" : "inherit",
+          }}
+        >
           <FormControlLabel
             control={
               <Checkbox
@@ -425,7 +477,9 @@ export default function Search() {
             control={
               <Checkbox
                 checked={searchDirectMessages}
-                onChange={(event) => setSearchDirectMessages(event.target.checked)}
+                onChange={(event) =>
+                  setSearchDirectMessages(event.target.checked)
+                }
               />
             }
             label="Include DMs"
@@ -434,7 +488,9 @@ export default function Search() {
             control={
               <Checkbox
                 checked={searchGroupMessages}
-                onChange={(event) => setSearchGroupMessages(event.target.checked)}
+                onChange={(event) =>
+                  setSearchGroupMessages(event.target.checked)
+                }
               />
             }
             label="Include Group Messages"
@@ -448,6 +504,7 @@ export default function Search() {
           savedMessages={savedMessageData?.data}
           sortByDate={sortByDate}
           disabled={!searchReddit}
+          theme={props.theme}
         />
         <SearchResultAccordion
           service="slack"
@@ -457,6 +514,7 @@ export default function Search() {
           savedMessages={savedMessageData?.data}
           sortByDate={sortByDate}
           disabled={!searchSlack}
+          theme={props.theme}
         />
         <SearchResultAccordion
           service="teams"
@@ -466,6 +524,7 @@ export default function Search() {
           savedMessages={savedMessageData?.data}
           sortByDate={sortByDate}
           disabled={!searchTeams}
+          theme={props.theme}
         />
       </Box>
     </Box>

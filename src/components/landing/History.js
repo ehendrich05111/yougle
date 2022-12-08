@@ -6,7 +6,7 @@ import { API_BASE, fetcher } from "../../api/api";
 import { useAuth } from "../../contexts/AuthContext";
 import FullPageCard from "../FullPageCard";
 
-export default function History() {
+export default function History(props) {
   const { token } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
   const { data, error, mutate } = useSWR(["/searchHistory", token], fetcher);
@@ -48,7 +48,14 @@ export default function History() {
       <ol className="history-box">
         {history?.map((item, idx) => (
           <li>
-            <div className="history-item">
+            <div
+              className="history-item"
+              style={{
+                border: props.theme
+                  ? "thin solid rgba(255, 255, 255, 0.65)"
+                  : "thin solid rgba(0, 0, 0, 0.25)",
+              }}
+            >
               <div className="history-text">{item}</div>
               <IconButton
                 type="button"

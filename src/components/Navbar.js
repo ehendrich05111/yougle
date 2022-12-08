@@ -9,7 +9,7 @@ import {
 import { MainPages } from "./landing/Landing";
 
 export default function Navbar(props) {
-  const barColor = props.navColor;
+  const barColor = props.theme ? "black" : "white";
 
   const { handleLogout } = useAuth();
 
@@ -22,19 +22,24 @@ export default function Navbar(props) {
       <div className="Bar">
         {Object.entries(MainPages).map(([name, path]) =>
           ["Profile", "Settings"].includes(name) ? null : (
-            <Link to={path} key={path} className={`Nav-link ${name}-Link`}>
+            <Link
+              to={path}
+              key={path}
+              className={`Nav-link ${name}-Link`}
+              style={{ color: props.theme ? "white" : "rgba(0, 0, 0, 0.75)" }}
+            >
               {name}
             </Link>
           )
         )}
       </div>
       <div id="account-buttons">
-        <Link to="/settings" className="Nav-link" style={{ paddingLeft: 0 }}>
+        <Link to="/settings" style={{ paddingLeft: 0 }}>
           <IconButton className="Settings-Link">
             <SettingsOutlined />
           </IconButton>
         </Link>
-        <Link to="/profile" className="Nav-link" style={{ paddingLeft: 0 }}>
+        <Link to="/profile" style={{ paddingLeft: 0 }}>
           <IconButton className="Profile-Link">
             <AccountCircleOutlined />
           </IconButton>
