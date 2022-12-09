@@ -167,7 +167,7 @@
   word-wrap: break-word;
   overflow: hidden;
   margin: 0.5em;
-  -webkit-line-clamp: 8;
+  -webkit-line-clamp: 6;
   -webkit-box-orient: vertical;
 }
 
